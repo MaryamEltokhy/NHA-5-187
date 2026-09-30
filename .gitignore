@@ -1,0 +1,35 @@
+# Data: never committed, except the manifests (patient lists + checksums) and split files
+data/*
+!data/manifests/
+!data/splits/
+
+# Models, experiment tracking, nnU-Net workspace
+models/checkpoints/
+mlruns/
+nnunet/nnUNet_raw/
+nnunet/nnUNet_preprocessed/
+nnunet/nnUNet_results/
+*.pth
+*.pt
+*.ckpt
+*.onnx
+
+# Medical images anywhere else in the repo
+*.nii
+*.nii.gz
+*.tar
+*.zip
+
+# Secrets: credentials live in .env (never committed); .env.example lists the names only
+.env
+kaggle.json
+
+# Python / Jupyter / editors
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+.vscode/
+.idea/
+.DS_Store
