@@ -1,0 +1,30 @@
+# Data loader settings (M1-T05). Read by bmts.data.datasets.brats.load_config / build_loaders.
+# Paths are for Colab; override them on the command line elsewhere (scripts/smoke_train.py --help).
+
+processed_root: /content/processed                          # cleaned scans: <dataset>/<subject>/<timepoint>/{t1,t1ce,t2,flair,seg}.nii.gz
+split_csv: /content/drive/MyDrive/BrainMRI_Data/qc/split_v1.csv   # patient-level split from M1-T04
+datasets: [brats2021]        # the main model trains on BraTS 2021 only (docs/dataset_research.md §8.2, rule 4)
+train_split: train
+val_split: val
+on_missing: error            # error | skip (skip drops cases whose cleaned files are missing, with a warning)
+normalize: false             # cleaned scans are already z-scored per MRI type; true only for uncleaned scans
+
+roi_size: [128, 128, 128]    # training patch in voxels (1 mm); use [96, 96, 96] on GPUs with less than 8 GB
+batch_size: 2
+num_workers: 2               # Colab has 2 CPU cores
+cache_rate: 0.0              # share of training cases kept in RAM; one case is about 150 MB, Colab has about 12 GB
+
+sampling:                    # training patches centred on tumor (pos) versus on other brain tissue (neg)
+  pos: 2
+  neg: 1
+
+augment:                     # proposal Milestone 1: rotations, flips, scaling, intensity/gamma shifts, elastic
+  flip_prob: 0.5             # per axis
+  affine_prob: 0.2           # small rotation + scaling
+  rotate_deg: 15
+  scale: 0.1
+  intensity_prob: 0.5        # brightness scale and shift
+  gamma_prob: 0.15
+  elastic_prob: 0.0          # elastic deformation is slow on CPU; switch on in a later experiment if useful
+
+seed: 42

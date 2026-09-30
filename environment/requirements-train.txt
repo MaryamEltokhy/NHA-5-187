@@ -1,0 +1,8 @@
+# Training environment. Minimum versions for the data loader (M1-T05); M1-T02 pins exact versions.
+torch>=2.3
+monai>=1.4
+nibabel>=5.2
+numpy
+pandas>=2.0
+pyyaml>=6.0
+tqdm
