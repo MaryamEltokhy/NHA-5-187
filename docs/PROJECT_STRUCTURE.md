@@ -284,8 +284,8 @@ models/
 
 ## 7. Git Strategy
 
-- **Repository:** the team's existing shared repository; nobody creates a new repo.
-- **Default branch:** `main` (protected; PR + one review required).
+- **Repository:** https://github.com/nhahub/NHA-5-187 (public, in the initiative's `nhahub` organisation). The initiative doesn't allow adding collaborators, so contributors work on their own **fork** and open pull requests into `main`; the repo admin (Mohamed) reviews and merges them.
+- **Default branch:** `main`. Changes arrive only through reviewed pull requests; before each task, update your fork with `git pull upstream main` (`upstream` = the main repo).
 - **Branch naming:** one branch per task, named after the task ID from the Notion task board, e.g. `M1-T05-subject-index`, `M2-T03-unet-baseline`.
 - **Commit messages:** start with the task ID, e.g. `M2-T03: add 3D U-Net baseline`.
 - **Pull requests:** template includes task ID, deliverable ID, test evidence, and a "no data / no secrets committed" checkbox. The deliverable owner's reviewer is listed in the plan (usually the milestone reviewer).
