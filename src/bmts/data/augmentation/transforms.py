@@ -21,6 +21,15 @@ from bmts.common.constants import MODALITIES, REGIONS, SEG
 FOREGROUND = "fg"  # 1-channel whole-tumor mask written next to the region channels
 
 
+Z_LIMIT = 20.0  # cleaned scans are z-scored: real tissue stays far inside +-20 standard deviations
+
+
+def sanitize(x):
+    """Replace NaN/inf and cap intensities at +-Z_LIMIT; a scan with almost no contrast (divided by a tiny standard
+    deviation when it was z-scored) would otherwise feed huge values into the network and overflow half precision."""
+    return torch.nan_to_num(x, nan=0.0, posinf=Z_LIMIT, neginf=-Z_LIMIT).clamp(-Z_LIMIT, Z_LIMIT)
+
+
 def nonzero(x):
     """Brain voxels: the cleaned scans are z-scored, so the brain has negative values too; background is exactly 0."""
     return x != 0
@@ -62,6 +71,7 @@ def load_transforms(normalize=False):
         T.DeleteItemsd(list(MODALITIES)),
         T.Orientationd(["image", SEG], axcodes="RAS", labels=(("L", "R"), ("P", "A"), ("I", "S"))),
         T.EnsureTyped("image", dtype=torch.float32),
+        T.Lambdad("image", func=sanitize),
     ]
     if normalize:  # only for scans that were not z-scored by the cleaning step
         chain.append(T.NormalizeIntensityd("image", nonzero=True, channel_wise=True))

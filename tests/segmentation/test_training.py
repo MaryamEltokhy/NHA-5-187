@@ -145,3 +145,37 @@ def test_time_budget_pauses_and_a_rerun_continues(setup):
     assert done["finished"]
     client = _client(setup)
     assert client.get_run(run.info.run_id).data.tags["state"] == "finished"
+
+
+class _NanOnce(torch.nn.Module):
+    """Dice+BCE that returns NaN on chosen calls, to imitate a half-precision overflow."""
+
+    def __init__(self, nan_calls):
+        super().__init__()
+        from monai.losses import DiceCELoss
+        self.inner, self.nan_calls, self.calls = DiceCELoss(sigmoid=True), nan_calls, 0
+
+    def forward(self, logits, label):
+        self.calls += 1
+        loss = self.inner(logits, label)
+        return loss * float("nan") if self.nan_calls(self.calls) else loss
+
+
+def test_a_single_bad_step_is_skipped_and_logged(setup, monkeypatch):
+    import bmts.segmentation.training.trainer as trainer
+    monkeypatch.setattr(trainer, "DiceCELoss", lambda **_: _NanOnce(lambda call: call == 1))
+    result = train(_config(setup, epochs=2), log=lambda *_: None)
+    assert result["finished"]
+    run = _client(setup).search_runs([_client(setup).get_experiment_by_name("test_experiment").experiment_id])[0]
+    client = _client(setup)
+    assert [m.value for m in client.get_metric_history(run.info.run_id, "skipped_steps")] == [1.0, 0.0]
+    assert run.data.tags["skipped_step_cases"].startswith("brats2021__BraTS2021_0000")
+
+
+def test_a_diverged_model_still_stops(setup, monkeypatch):
+    import bmts.segmentation.training.trainer as trainer
+    monkeypatch.setattr(trainer, "DiceCELoss", lambda **_: _NanOnce(lambda call: True))
+    cfg = _config(setup, epochs=1)
+    cfg["exp"]["training"]["iters_per_epoch"] = 6
+    with pytest.raises(FloatingPointError, match="non-finite losses"):
+        train(cfg, log=lambda *_: None)

@@ -249,7 +249,7 @@ def train(cfg, max_hours=None, resume=True, log=print):
     try:
         for epoch in range(state["epoch"] + 1, t["epochs"] + 1):
             model.train()
-            tick, losses = time.time(), []
+            tick, losses, skipped = time.time(), [], []
             batches = iter(train_loader)
             for _ in range(t["iters_per_epoch"]):
                 try:
@@ -261,16 +261,24 @@ def train(cfg, max_hours=None, resume=True, log=print):
                 optimizer.zero_grad(set_to_none=True)
                 with torch.autocast(device.type, enabled=amp):
                     loss = loss_fn(model(image), label)
-                if not torch.isfinite(loss):
-                    raise FloatingPointError(f"loss became {loss.item()} at epoch {epoch}")
+                if not torch.isfinite(loss):  # skip this step (no weight update); stop only if it keeps happening
+                    skipped.extend(sorted(set(batch.get("id", ["?"]))))
+                    if len(skipped) > max(3, 0.1 * t["iters_per_epoch"]):
+                        raise FloatingPointError(f"{len(skipped)} non-finite losses in epoch {epoch} (cases {skipped[:5]}): "
+                                                 "the model has probably diverged; lower lr or resume from best.pt")
+                    log(f"  skipped a step with a non-finite loss ({loss.item()}) in epoch {epoch}, cases {sorted(set(batch.get('id', ['?'])))}")
+                    continue
                 scaler.scale(loss).backward()
                 scaler.unscale_(optimizer)
                 torch.nn.utils.clip_grad_norm_(model.parameters(), t.get("grad_clip", 12.0))
                 scaler.step(optimizer)
                 scaler.update()
                 losses.append(loss.item())
-            metrics = {"train_loss": sum(losses) / len(losses), "lr": optimizer.param_groups[0]["lr"],
-                       "epoch_seconds": time.time() - tick}
+            metrics = {"train_loss": sum(losses) / max(1, len(losses)), "lr": optimizer.param_groups[0]["lr"],
+                       "epoch_seconds": time.time() - tick, "skipped_steps": len(skipped)}
+            if skipped:
+                state.setdefault("skipped_cases", []).extend(skipped)
+                mlflow.set_tag("skipped_step_cases", ", ".join(sorted(set(state["skipped_cases"])))[:4900])
             scheduler.step()
             if smart:
                 dataset.update_cache()

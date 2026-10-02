@@ -106,3 +106,15 @@ def test_loaders_give_the_model_what_it_expects(data):
     assert val["image"].shape == (1, 4, *SHAPE) and val["label"].shape == (1, 3, *SHAPE)
     assert val["label"][0, 1].sum() == 12 * 12 * 10   # whole tumor = the edema box
     assert len(val_loader.dataset) == 1                 # the test patient never appears
+
+
+def test_broken_intensities_are_sanitized(data):
+    """A scan with NaN and absurd values (e.g. a near-constant modality divided by a tiny std) must not reach the model."""
+    path = data[0] / "brats2021" / "BraTS2021_00004" / "0" / "t1.nii.gz"
+    img = nib.load(path)
+    arr = np.asarray(img.dataobj).copy()
+    arr[10, 10, 10], arr[11, 11, 11], arr[12, 12, 12] = np.nan, 1e9, -1e9
+    nib.save(nib.Nifti1Image(arr, img.affine), path)
+    _, val_loader = build_loaders(config(*data))
+    image = next(iter(val_loader))["image"]
+    assert torch.isfinite(image).all() and image.abs().max() <= 20
