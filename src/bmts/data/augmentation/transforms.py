@@ -1,8 +1,12 @@
-"""MONAI transform chains for training and validation (M1-T05).
+"""MONAI transform chains for training and validation (M1-T05, made cache-friendly in M2-T03).
 
 Input: one cleaned case = {t1, t1ce, t2, flair, seg} file paths (output of M1-T04, already RAS,
 240x240x155, z-scored per modality, masks in the canonical label scheme).
 Output: "image" (4, H, W, D) float32 in MODALITIES order, "label" (3, H, W, D) float32 region masks (TC, WT, ET).
+
+Training chain: the deterministic part (load, crop to the brain, store the image as float16 and the mask as uint8)
+comes first, so a CacheDataset keeps about 30 MB per patient in RAM instead of about 110 MB; the random part
+(patch sampling, augmentation, region channels) runs on every draw.
 """
 from __future__ import annotations
 
@@ -14,7 +18,7 @@ from monai.data import MetaTensor
 
 from bmts.common.constants import MODALITIES, REGIONS, SEG
 
-FOREGROUND = "fg"  # temporary whole-tumor mask used only to pick training patches
+FOREGROUND = "fg"  # 1-channel whole-tumor mask written next to the region channels
 
 
 def nonzero(x):
@@ -25,7 +29,7 @@ def nonzero(x):
 class SegToRegionsd(T.MapTransform):
     """Canonical label map (1 channel) -> one binary channel per region in REGIONS (TC, WT, ET).
 
-    Also writes a 1-channel whole-tumor mask under `foreground_key` for tumor-centred patch sampling.
+    Also writes a 1-channel whole-tumor mask under `foreground_key`.
     Labels outside every region (background, resection cavity 4) end up 0 in every channel.
     """
 
@@ -37,7 +41,7 @@ class SegToRegionsd(T.MapTransform):
     def __call__(self, data):
         d = dict(data)
         for key in self.key_iterator(d):
-            seg = torch.as_tensor(d[key])[0].round().long()
+            seg = torch.as_tensor(d[key])[0].float().round().long()
             channels = torch.stack([torch.isin(seg, labels) for labels in self.regions.values()]).float()
             whole = channels[list(self.regions).index("WT")][None] if "WT" in self.regions else channels.amax(0, keepdim=True)
             if isinstance(d[key], MetaTensor):
@@ -49,7 +53,7 @@ class SegToRegionsd(T.MapTransform):
 
 
 def load_transforms(normalize=False):
-    """Read the 5 files of a case, stack the 4 MRI types as channels, turn the mask into region channels."""
+    """Read the 5 files of a case and stack the 4 MRI types as channels ("image"); the mask stays in "seg"."""
     keys = [*MODALITIES, SEG]
     chain = [
         T.LoadImaged(keys, image_only=True),
@@ -61,20 +65,23 @@ def load_transforms(normalize=False):
     ]
     if normalize:  # only for scans that were not z-scored by the cleaning step
         chain.append(T.NormalizeIntensityd("image", nonzero=True, channel_wise=True))
-    chain.append(SegToRegionsd(SEG))
     return chain
 
 
 def train_transforms(cfg):
-    """Loading + random tumor-centred patch + augmentation (flips, small rotation/scaling, intensity, gamma)."""
+    """Loading + random tumor-centred patches + augmentation (flips, small rotation/scaling, intensity, gamma)."""
     roi = cfg["roi_size"]
     aug, sampling = cfg["augment"], cfg["sampling"]
-    keys = ["image", "label", FOREGROUND]
     chain = load_transforms(cfg.get("normalize", False)) + [
-        T.CropForegroundd(keys, source_key="image", select_fn=nonzero, allow_smaller=True),
-        T.SpatialPadd(keys, spatial_size=roi),
-        T.RandCropByPosNegLabeld(["image", "label"], label_key=FOREGROUND, spatial_size=roi,
-                                 pos=sampling["pos"], neg=sampling["neg"], num_samples=1),
+        # deterministic: this is what a cache keeps
+        T.CropForegroundd(["image", SEG], source_key="image", select_fn=nonzero, allow_smaller=True),
+        T.SpatialPadd(["image", SEG], spatial_size=roi),
+        T.CastToTyped(["image", SEG], dtype=(torch.float16, torch.uint8)),
+        # random: runs on every draw; two thirds of the patches (pos:neg = 2:1) are centred on tumor
+        T.RandCropByPosNegLabeld(["image", SEG], label_key=SEG, spatial_size=roi, pos=sampling["pos"],
+                                 neg=sampling["neg"], num_samples=sampling.get("samples_per_case", 1)),
+        T.CastToTyped("image", dtype=torch.float32),
+        SegToRegionsd(SEG),
         T.DeleteItemsd(FOREGROUND),
     ]
     for axis in range(3):
@@ -97,8 +104,9 @@ def train_transforms(cfg):
 
 
 def val_transforms(cfg):
-    """Loading only: the whole 240x240x155 volume, for sliding-window evaluation."""
+    """Loading only: the whole 240x240x155 volume with region channels, for sliding-window evaluation."""
     return T.Compose(load_transforms(cfg.get("normalize", False)) + [
+        SegToRegionsd(SEG),
         T.DeleteItemsd(FOREGROUND),
         T.EnsureTyped(["image", "label"], dtype=torch.float32, track_meta=False),
     ])

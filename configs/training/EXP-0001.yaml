@@ -1,0 +1,35 @@
+# EXP-0001 - 3D U-Net baseline (task M2-T03). Run with: python scripts/train.py --exp configs/training/EXP-0001.yaml
+experiment_id: EXP-0001
+task: M2-T03
+description: 3D U-Net baseline on BraTS 2021 (train split), sigmoid TC/WT/ET outputs, Dice + BCE loss
+data_config: configs/data/loader_v1.yaml
+model_config: configs/models/unet3d_baseline.yaml
+
+data_overrides:              # on top of configs/data/loader_v1.yaml
+  batch_size: 1              # 1 patient per step ...
+  sampling: {pos: 2, neg: 1, samples_per_case: 2}   # ... with 2 patches from it -> 2 patches per step
+  smart_cache_num: 150       # patients kept in RAM (about 30 MB each); a quarter is swapped after every epoch
+  smart_cache_replace_rate: 0.25
+  num_workers: 2
+
+training:
+  epochs: 80
+  iters_per_epoch: 200       # steps per epoch (one step = 2 patches of 128^3)
+  lr: 3.0e-4                 # AdamW, linear warm-up then cosine decay to 1% of this
+  weight_decay: 1.0e-5
+  warmup_epochs: 3
+  loss: dice_bce             # Dice + binary cross-entropy on the 3 sigmoid channels
+  amp: true                  # mixed precision on GPU
+  grad_clip: 12.0
+  val_every: 5               # epochs between validations during training
+  val_cases_during_training: 40   # first 40 validation patients (sorted by ID) while training
+  val_cases: null            # final evaluation: all validation patients
+  sw_overlap: 0.5            # sliding-window overlap for whole-volume prediction
+  sw_batch_size: 2
+  seed: 42
+
+mlflow:
+  tracking_uri: sqlite:////content/drive/MyDrive/BrainMRI_Data/mlflow.db   # the team's MLflow store (M2-T01)
+  experiment: BrainMRI_3D_UNet
+
+output_dir: /content/drive/MyDrive/BrainMRI_Data/runs/EXP-0001_unet3d_baseline   # checkpoints + final metrics
