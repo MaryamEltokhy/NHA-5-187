@@ -14,7 +14,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from bmts.segmentation.training.trainer import final_evaluation, load_experiment, train  # noqa: E402
+from bmts.segmentation.training.trainer import final_evaluation, load_experiment, mirror_tracking_db, train  # noqa: E402
 
 
 def main():
@@ -46,6 +46,7 @@ def main():
         import mlflow
         result = final_evaluation(cfg)
         mlflow.end_run()
+        mirror_tracking_db(cfg)
     else:
         result = train(cfg, max_hours=args.max_hours, resume=not args.no_resume)
     print(json.dumps(result, indent=2, default=str))

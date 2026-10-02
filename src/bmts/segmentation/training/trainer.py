@@ -9,8 +9,12 @@ import csv
 import hashlib
 import json
 import math
+import os
+import shutil
+import sqlite3
 import subprocess
 import time
+import warnings
 from pathlib import Path
 
 import mlflow
@@ -107,9 +111,55 @@ def validate(model, loader, cfg, device, amp, with_hd95=False, per_case_rows=Non
     return summarize(results)
 
 
+def _sqlite_path(uri):
+    return Path(uri[len("sqlite:///"):]) if uri.startswith("sqlite:///") else None
+
+
+def _tracking_uri(cfg):
+    """SQLite cannot lock files reliably on Google Drive (random "disk I/O error"). With mlflow.local_copy set, MLflow
+    works on a copy on the local disk, refreshed from the Drive file when that is newer, and mirror_tracking_db()
+    copies it back after every epoch."""
+    m = cfg["exp"]["mlflow"]
+    remote, local = _sqlite_path(m["tracking_uri"]), m.get("local_copy")
+    if not remote or not local:
+        return m["tracking_uri"]
+    local = Path(local)
+    if remote.exists() and (not local.exists() or remote.stat().st_mtime > local.stat().st_mtime):
+        local.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(remote, local)
+    return f"sqlite:///{local.as_posix()}"
+
+
+def mirror_tracking_db(cfg):
+    """Copy the local MLflow database back to its home (e.g. Drive) as one consistent snapshot."""
+    m = cfg["exp"]["mlflow"]
+    remote, local = _sqlite_path(m["tracking_uri"]), m.get("local_copy")
+    if not remote or not local or not Path(local).exists():
+        return
+    snapshot = Path(local).with_name(Path(local).name + ".snapshot")
+    snapshot.unlink(missing_ok=True)
+    src, dst = sqlite3.connect(local), sqlite3.connect(snapshot)
+    try:
+        src.backup(dst)
+    finally:
+        src.close()
+        dst.close()
+    try:
+        remote.parent.mkdir(parents=True, exist_ok=True)
+        tmp = remote.with_name(remote.name + ".tmp")
+        shutil.copyfile(snapshot, tmp)
+        try:
+            os.replace(tmp, remote)
+        except PermissionError:  # Windows: the target is open elsewhere; overwrite it in place instead
+            shutil.copyfile(snapshot, remote)
+            tmp.unlink(missing_ok=True)
+    except OSError as e:  # never stop training over the mirror; the next epoch tries again
+        warnings.warn(f"could not copy the MLflow database to {remote}: {e}", stacklevel=2)
+
+
 def _open_mlflow_run(cfg, state, out):
     m = cfg["exp"]["mlflow"]
-    mlflow.set_tracking_uri(m["tracking_uri"])
+    mlflow.set_tracking_uri(_tracking_uri(cfg))
     experiment = mlflow.get_experiment_by_name(m["experiment"])
     if experiment is None:  # keep artifacts on Drive next to the runs, not on the temporary Colab disk
         mlflow.create_experiment(m["experiment"], artifact_location=(out.parent / "mlflow_artifacts").resolve().as_uri())
@@ -183,6 +233,10 @@ def train(cfg, max_hours=None, resume=True, log=print):
     state["run_id"] = run.info.run_id
     if new_run:
         _log_setup(cfg, device, n_train, len(val_loader.dataset), model)
+    else:
+        logged = mlflow.get_run(run.info.run_id).data.params.get("train.epochs")
+        if logged and int(logged) != t["epochs"]:  # parameters cannot change; record the new total as a tag
+            mlflow.set_tag("epochs_actual", f"{t['epochs']} (the run started with {logged})")
     mlflow.set_tag("state", "training")
     log(f"device {device}{' (' + torch.cuda.get_device_name(0) + ')' if amp else ''} | MLflow run {run.info.run_id} | "
         f"{n_train} training cases, {len(val_loader.dataset)} validation cases during training")
@@ -237,6 +291,7 @@ def train(cfg, max_hours=None, resume=True, log=print):
             state["history"].append({"epoch": epoch, **metrics})
             _save(last, {"model": model.state_dict(), "optimizer": optimizer.state_dict(),
                          "scheduler": scheduler.state_dict(), "scaler": scaler.state_dict(), "state": state})
+            mirror_tracking_db(cfg)
             val_text = f", val Dice {[round(metrics[f'val_dice_{r}'], 3) for r in REGIONS]}" if "val_mean_dice" in metrics else ""
             log(f"epoch {epoch}/{t['epochs']}: loss {metrics['train_loss']:.4f}, lr {metrics['lr']:.2e}, "
                 f"{metrics['epoch_seconds']:.0f}s{val_text}")
@@ -251,10 +306,12 @@ def train(cfg, max_hours=None, resume=True, log=print):
     if not finished:
         mlflow.set_tag("state", f"paused after epoch {state['epoch']} (rerun to resume)")
         mlflow.end_run(status="KILLED")
+        mirror_tracking_db(cfg)
         return {"finished": False, "epoch": state["epoch"], "best_mean_dice": state["best_mean_dice"]}
     result = final_evaluation(cfg, device, amp, log)
     mlflow.set_tag("state", "finished")
     mlflow.end_run()
+    mirror_tracking_db(cfg)
     return {"finished": True, **result}
 
 
@@ -283,7 +340,7 @@ def final_evaluation(cfg, device=None, amp=None, log=print):
             if m in summary[r] and not math.isnan(summary[r][m]):
                 metrics[f"final_val_{m}_{r}"] = summary[r][m]
     if mlflow.active_run() is None:
-        mlflow.set_tracking_uri(cfg["exp"]["mlflow"]["tracking_uri"])
+        mlflow.set_tracking_uri(_tracking_uri(cfg))
         mlflow.start_run(run_id=ck.get("run_id") or _run_id_from_last(out))
     mlflow.log_metrics(metrics)
     for name in ("final_val_metrics.json", "final_val_per_case.csv", "config_resolved.yaml"):
