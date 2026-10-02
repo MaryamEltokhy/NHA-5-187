@@ -1,0 +1,8 @@
+# 3D U-Net baseline (M2-T03): MONAI residual UNet. Read by bmts.segmentation.models.unet3d.build_unet3d.
+name: unet3d_baseline
+channels: [32, 64, 128, 256, 320]   # feature maps per level; 5 levels -> 4 down-sampling steps (128^3 patch -> 8^3)
+strides: [2, 2, 2, 2]
+num_res_units: 2                    # residual blocks per level
+norm: instance                      # instance norm works with batch size 1-2
+dropout: 0.1                        # light regularisation; also enables Monte Carlo dropout for M3-T04
+min_gpu_memory_gb: 8                # 128^3 patches, 2 per step, mixed precision; use 96^3 below this

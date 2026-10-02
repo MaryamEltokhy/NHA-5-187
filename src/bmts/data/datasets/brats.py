@@ -9,13 +9,14 @@ final evaluation (M5-T02) may set.
 """
 from __future__ import annotations
 
+import multiprocessing
 import warnings
 from pathlib import Path
 
 import pandas as pd
 import torch
 import yaml
-from monai.data import CacheDataset, DataLoader, Dataset
+from monai.data import CacheDataset, DataLoader, Dataset, SmartCacheDataset
 
 from bmts.common.constants import MODALITIES, SEG
 from bmts.data.augmentation.transforms import train_transforms, val_transforms
@@ -80,23 +81,52 @@ def list_cases(split_csv, processed_root, splits=("train",), datasets=("brats202
     return cases
 
 
+def _cases(cfg, split, limit):
+    return list_cases(split_csv=cfg["split_csv"], processed_root=cfg["processed_root"], datasets=cfg["datasets"],
+                      splits=(split,), limit=limit, on_missing=cfg.get("on_missing", "error"))
+
+
+def _loader_options(cfg):
+    workers = cfg.get("num_workers", 0)
+    return dict(num_workers=workers, pin_memory=torch.cuda.is_available(), persistent_workers=workers > 0)
+
+
+def build_train_loader(cfg, limit=None):
+    """Random augmented patches. Cases can be kept in RAM between epochs:
+
+    - smart_cache_num: N   keeps N patients in RAM and swaps smart_cache_replace_rate of them after every epoch
+                           (the trainer calls start / update_cache / shutdown); best for the full training set.
+    - cache_rate: r        keeps a fixed share r of the patients in RAM.
+    """
+    cases = _cases(cfg, cfg["train_split"], limit)
+    if not cases:
+        raise RuntimeError("No training cases found: check split_csv, processed_root and datasets in the config.")
+    transforms, workers = train_transforms(cfg), cfg.get("num_workers", 0)
+    smart = cfg.get("smart_cache_num", 0)
+    if smart and smart < len(cases):
+        dataset = SmartCacheDataset(cases, transforms, cache_num=smart, replace_rate=cfg.get("smart_cache_replace_rate", 0.25),
+                                    num_init_workers=max(workers, 1), num_replace_workers=max(workers, 1))
+    elif smart or cfg.get("cache_rate", 0.0) > 0:
+        dataset = CacheDataset(cases, transforms, cache_rate=1.0 if smart else cfg["cache_rate"], num_workers=max(workers, 1))
+    else:
+        dataset = Dataset(cases, transforms)
+    options = _loader_options(cfg)
+    if isinstance(dataset, SmartCacheDataset):
+        # it swaps cases between epochs, so worker processes must be recreated every epoch (not persistent),
+        # and they must start by "fork" (Linux, Colab): with "spawn" (Windows, macOS) MONAI cannot hand the cache over
+        options["persistent_workers"] = False
+        if workers > 0 and multiprocessing.get_start_method() != "fork":
+            warnings.warn("smart_cache_num needs fork-started workers; loading in the main process instead", stacklevel=2)
+            options["num_workers"] = 0
+    return DataLoader(dataset, batch_size=cfg["batch_size"], shuffle=True, drop_last=False, **options)
+
+
+def build_val_loader(cfg, limit=None):
+    """Whole validation volumes, batch size 1 (never the locked test patients)."""
+    return DataLoader(Dataset(_cases(cfg, cfg["val_split"], limit), val_transforms(cfg)), batch_size=1,
+                      shuffle=False, **_loader_options(cfg))
+
+
 def build_loaders(cfg, train_limit=None, val_limit=None):
     """Training loader (random augmented patches) and validation loader (whole volumes, batch size 1)."""
-    common = dict(split_csv=cfg["split_csv"], processed_root=cfg["processed_root"], datasets=cfg["datasets"],
-                  on_missing=cfg.get("on_missing", "error"))
-    train_cases = list_cases(splits=(cfg["train_split"],), limit=train_limit, **common)
-    val_cases = list_cases(splits=(cfg["val_split"],), limit=val_limit, **common)
-    if not train_cases:
-        raise RuntimeError("No training cases found: check split_csv, processed_root and datasets in the config.")
-
-    cache_rate = cfg.get("cache_rate", 0.0)
-    workers = cfg.get("num_workers", 0)
-    if cache_rate > 0:
-        train_ds = CacheDataset(train_cases, train_transforms(cfg), cache_rate=cache_rate, num_workers=workers)
-    else:
-        train_ds = Dataset(train_cases, train_transforms(cfg))
-    val_ds = Dataset(val_cases, val_transforms(cfg))
-    extra = dict(num_workers=workers, pin_memory=torch.cuda.is_available(), persistent_workers=workers > 0)
-    train_loader = DataLoader(train_ds, batch_size=cfg["batch_size"], shuffle=True, drop_last=False, **extra)
-    val_loader = DataLoader(val_ds, batch_size=1, shuffle=False, **extra)
-    return train_loader, val_loader
+    return build_train_loader(cfg, train_limit), build_val_loader(cfg, val_limit)

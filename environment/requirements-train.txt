@@ -1,4 +1,4 @@
-# Training environment. Minimum versions for the data loader (M1-T05); M1-T02 pins exact versions.
+# Training environment. Minimum versions; M1-T02 pins exact versions.
 torch>=2.3
 monai>=1.4
 nibabel>=5.2
@@ -6,3 +6,5 @@ numpy
 pandas>=2.0
 pyyaml>=6.0
 tqdm
+scipy>=1.10        # HD95 (MONAI surface distances)
+mlflow>=2.12       # experiment tracking (M2-T01)

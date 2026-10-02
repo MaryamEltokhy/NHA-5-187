@@ -35,6 +35,7 @@ for batch in train_loader:
 - **Training uses BraTS 2021 only** (`datasets: [brats2021]`), following rule 4 of `docs/dataset_research.md` §8.2, so the other cohorts stay valid external tests.
 - **Only the patients you clean are needed.** With `on_missing: error` the loader stops if a listed patient has no cleaned files; use `on_missing: skip` while only part of the data is cleaned.
 - **Small GPUs:** use `roi_size: [96, 96, 96]` and `batch_size: 1` below 8 GB.
+- **Keeping patients in RAM (M2-T03):** `smart_cache_num: N` keeps N patients in memory (about 30 MB each: cropped to the brain, image stored as float16, mask as uint8) and swaps `smart_cache_replace_rate` of them after every epoch; `sampling.samples_per_case` draws several patches per loaded patient. On Windows/macOS the cache loads in the main process (MONAI limitation); on Colab (Linux) it uses the worker processes.
 
 ## Checks
 
