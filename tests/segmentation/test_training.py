@@ -1,5 +1,6 @@
 """Training tests (M2-T03): scoring conventions, and a tiny end-to-end run with MLflow, resume and pause."""
 import math
+import shutil
 
 import mlflow
 import nibabel as nib
@@ -56,6 +57,16 @@ def test_summary_skips_nan_and_counts_it():
 
 
 # ---------- tiny end-to-end training ----------
+_reads = iter(range(10**6))
+
+
+def _client(tmp):
+    """Read the mirrored ("Drive") database through a fresh copy, so the test never holds that file open
+    (on Windows an open file cannot be replaced; Colab's Linux does not have this limit)."""
+    copy = tmp / f"read_{next(_reads)}.db"
+    shutil.copyfile(tmp / "mlflow.db", copy)
+    return MlflowClient(tracking_uri=f"sqlite:///{copy.as_posix()}")
+
 
 def _write_case(root, subject, rng):
     folder = root / "brats2021" / subject / "0"
@@ -93,6 +104,7 @@ def _config(tmp, epochs=2):
                           smart_cache_num=2, model={"channels": [4, 8], "strides": [2], "num_res_units": 1})
     cfg["data"]["roi_size"] = [16, 16, 16]
     cfg["exp"]["mlflow"]["experiment"] = "test_experiment"
+    cfg["exp"]["mlflow"]["local_copy"] = str(tmp / "local_disk" / "mlflow_local.db")   # the tests read the mirrored file
     cfg["exp"]["training"]["warmup_epochs"] = 1
     return cfg
 
@@ -106,7 +118,7 @@ def test_training_logs_everything_and_resumes(setup):
     per_case = pd.read_csv(out / "final_val_per_case.csv")
     assert per_case.case.tolist() == ["brats2021__BraTS2021_00004/0"]          # the locked test patient is never read
 
-    client = MlflowClient(tracking_uri=f"sqlite:///{(setup / 'mlflow.db').as_posix()}")
+    client = _client(setup)
     run = client.search_runs([client.get_experiment_by_name("test_experiment").experiment_id])[0]
     assert run.data.tags["state"] == "finished" and run.data.tags["task"] == "M2-T03"
     assert run.data.params["train_cases"] == "3" and run.data.tags["split_version"] == "v1_test"
@@ -116,17 +128,20 @@ def test_training_logs_everything_and_resumes(setup):
 
     resumed = train(_config(setup, epochs=3), log=lambda *_: None)        # more epochs: continues from epoch 2
     assert resumed["finished"]
+    client = _client(setup)
     history = client.get_metric_history(run.info.run_id, "train_loss")
     assert [m.step for m in history] == [1, 2, 3]                          # same MLflow run, no epoch repeated
+    assert client.get_run(run.info.run_id).data.tags["epochs_actual"] == "3 (the run started with 2)"
     assert len(client.search_runs([run.info.experiment_id])) == 1
 
 
 def test_time_budget_pauses_and_a_rerun_continues(setup):
     paused = train(_config(setup, epochs=3), max_hours=1e-9, log=lambda *_: None)
     assert not paused["finished"] and paused["epoch"] == 1
-    client = MlflowClient(tracking_uri=f"sqlite:///{(setup / 'mlflow.db').as_posix()}")
+    client = _client(setup)
     run = client.search_runs([client.get_experiment_by_name("test_experiment").experiment_id])[0]
     assert run.info.status == "KILLED" and run.data.tags["state"].startswith("paused")
     done = train(_config(setup, epochs=3), log=lambda *_: None)
     assert done["finished"]
+    client = _client(setup)
     assert client.get_run(run.info.run_id).data.tags["state"] == "finished"

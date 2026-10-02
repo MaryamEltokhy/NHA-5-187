@@ -31,5 +31,6 @@ training:
 mlflow:
   tracking_uri: sqlite:////content/drive/MyDrive/BrainMRI_Data/mlflow.db   # the team's MLflow store (M2-T01)
   experiment: BrainMRI_3D_UNet
+  local_copy: /content/mlflow_local.db   # SQLite on Drive fails at random ("disk I/O error"): work locally, copy to Drive every epoch
 
 output_dir: /content/drive/MyDrive/BrainMRI_Data/runs/EXP-0001_unet3d_baseline   # checkpoints + final metrics
