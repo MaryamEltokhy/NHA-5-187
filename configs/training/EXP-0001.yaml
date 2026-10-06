@@ -8,12 +8,13 @@ model_config: configs/models/unet3d_baseline.yaml
 data_overrides:              # on top of configs/data/loader_v1.yaml
   batch_size: 1              # 1 patient per step ...
   sampling: {pos: 2, neg: 1, samples_per_case: 2}   # ... with 2 patches from it -> 2 patches per step
-  smart_cache_num: 150       # patients kept in RAM (about 30 MB each); a quarter is swapped after every epoch
+  smart_cache_num: 60        # patients kept in RAM (about 30 MB each); a quarter is swapped after every epoch
+                             # (150 ran Colab out of RAM at the first validation)
   smart_cache_replace_rate: 0.25
   num_workers: 2
 
 training:
-  epochs: 80
+  epochs: 60                 # 80 at first; cut to 60 on 2 Oct to fit the deadline (about 3 min per epoch on a T4)
   iters_per_epoch: 200       # steps per epoch (one step = 2 patches of 128^3)
   lr: 3.0e-4                 # AdamW, linear warm-up then cosine decay to 1% of this
   weight_decay: 1.0e-5

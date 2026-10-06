@@ -7,9 +7,9 @@ BraTS 2021 training patients, and is scored on the validation patients. M2-T04 c
 
 | Part | File | Choice |
 | --- | --- | --- |
-| Experiment | `configs/training/EXP-0001.yaml` | 80 epochs × 200 steps, AdamW 3e-4 with 3 warm-up epochs then cosine decay, Dice + BCE loss, mixed precision, gradient clipping |
+| Experiment | `configs/training/EXP-0001.yaml` | 60 epochs × 200 steps, AdamW 3e-4 with 3 warm-up epochs then cosine decay, Dice + BCE loss, mixed precision, gradient clipping |
 | Model | `configs/models/unet3d_baseline.yaml`, `src/bmts/segmentation/models/unet3d.py` | MONAI residual 3D U-Net, 5 levels (32→320 feature maps), instance norm, dropout 0.1 (reused for the confidence map in M3-T04) |
-| Data | `configs/data/loader_v1.yaml` + overrides | 128³ patches, 2 per step from one patient (two thirds centred on tumor), flips/rotation/scaling/brightness/gamma; 150 patients kept in RAM, a quarter swapped after every epoch |
+| Data | `configs/data/loader_v1.yaml` + overrides | 128³ patches, 2 per step from one patient (two thirds centred on tumor), flips/rotation/scaling/brightness/gamma; 60 patients kept in RAM, a quarter swapped after every epoch |
 | Training loop | `src/bmts/segmentation/training/trainer.py` | Checkpoint to Drive after every epoch (`last.pt`), best model by validation mean Dice (`best.pt`), resume on rerun, clean stop at `--max-hours` |
 | Scores | `src/bmts/segmentation/training/metrics.py` | Dice, IoU, sensitivity, precision, HD95 per region, with the same conventions as the team's `pipeline/metrics.py` (M2-T02) |
 | Run it | `notebooks/04_train_unet_baseline.ipynb` (Colab T4) or `python scripts/train.py --exp configs/training/EXP-0001.yaml` | |
