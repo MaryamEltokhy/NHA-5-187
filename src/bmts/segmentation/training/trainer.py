@@ -192,6 +192,20 @@ def _log_setup(cfg, device, n_train, n_val, model):
     })
 
 
+def forward_loss(model, loss_fn, image, label, device, amp):
+    """Loss in mixed precision; if half precision overflows (inf/NaN), the same step again in full precision.
+
+    Returns (loss, retried_in_fp32). Half precision tops out at about 65,000, which large activations can exceed
+    as training goes on; redoing only those rare steps in float32 keeps the speed of mixed precision.
+    """
+    with torch.autocast(device.type, enabled=amp):
+        loss = loss_fn(model(image), label)
+    if amp and not torch.isfinite(loss):
+        with torch.autocast(device.type, enabled=False):
+            return loss_fn(model(image.float()), label.float()), True
+    return loss, False
+
+
 def _save(path, payload):
     tmp = path.with_suffix(".tmp")
     torch.save(payload, tmp)
@@ -249,7 +263,7 @@ def train(cfg, max_hours=None, resume=True, log=print):
     try:
         for epoch in range(state["epoch"] + 1, t["epochs"] + 1):
             model.train()
-            tick, losses, skipped = time.time(), [], []
+            tick, losses, skipped, fp32_retries = time.time(), [], [], 0
             batches = iter(train_loader)
             for _ in range(t["iters_per_epoch"]):
                 try:
@@ -259,9 +273,9 @@ def train(cfg, max_hours=None, resume=True, log=print):
                     batch = next(batches)
                 image, label = batch["image"].to(device), batch["label"].to(device)
                 optimizer.zero_grad(set_to_none=True)
-                with torch.autocast(device.type, enabled=amp):
-                    loss = loss_fn(model(image), label)
-                if not torch.isfinite(loss):  # skip this step (no weight update); stop only if it keeps happening
+                loss, retried = forward_loss(model, loss_fn, image, label, device, amp)
+                fp32_retries += retried
+                if not torch.isfinite(loss):  # even full precision fails: skip the step; stop only if it keeps happening
                     skipped.extend(sorted(set(batch.get("id", ["?"]))))
                     if len(skipped) > max(3, 0.1 * t["iters_per_epoch"]):
                         raise FloatingPointError(f"{len(skipped)} non-finite losses in epoch {epoch} (cases {skipped[:5]}): "
@@ -275,7 +289,7 @@ def train(cfg, max_hours=None, resume=True, log=print):
                 scaler.update()
                 losses.append(loss.item())
             metrics = {"train_loss": sum(losses) / max(1, len(losses)), "lr": optimizer.param_groups[0]["lr"],
-                       "epoch_seconds": time.time() - tick, "skipped_steps": len(skipped)}
+                       "epoch_seconds": time.time() - tick, "skipped_steps": len(skipped), "fp32_retry_steps": fp32_retries}
             if skipped:
                 state.setdefault("skipped_cases", []).extend(skipped)
                 mlflow.set_tag("skipped_step_cases", ", ".join(sorted(set(state["skipped_cases"])))[:4900])

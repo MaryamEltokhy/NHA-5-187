@@ -179,3 +179,20 @@ def test_a_diverged_model_still_stops(setup, monkeypatch):
     cfg["exp"]["training"]["iters_per_epoch"] = 6
     with pytest.raises(FloatingPointError, match="non-finite losses"):
         train(cfg, log=lambda *_: None)
+
+
+def test_half_precision_overflow_is_redone_in_full_precision():
+    """A loss that only fails under autocast (as an fp16 overflow does) is recomputed without it, not skipped."""
+    from bmts.segmentation.training.trainer import forward_loss
+
+    def loss_fn(logits, label):
+        loss = torch.nn.functional.mse_loss(logits.float(), label)
+        return loss * float("nan") if torch.is_autocast_enabled("cpu") else loss
+
+    model = torch.nn.Conv3d(4, 3, 1)
+    image, label = torch.randn(1, 4, 4, 4, 4), torch.zeros(1, 3, 4, 4, 4)
+    loss, retried = forward_loss(model, loss_fn, image, label, torch.device("cpu"), amp=True)
+    assert retried and torch.isfinite(loss)
+    loss, retried = forward_loss(model, loss_fn, image, label, torch.device("cpu"), amp=False)
+    assert not retried and torch.isfinite(loss)
+
