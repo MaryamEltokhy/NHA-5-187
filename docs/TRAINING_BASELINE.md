@@ -17,6 +17,35 @@ BraTS 2021 training patients, and is scored on the validation patients. M2-T04 c
 Prediction on a whole scan uses sliding windows of 128³ with 50 % overlap; a voxel belongs to a region when the
 sigmoid output is above 0.5.
 
+## Results (7 Oct 2026)
+
+Best checkpoint (epoch 10, chosen by validation mean Dice on 40 patients) evaluated on **all 188 validation patients**
+of `split_v1` (BraTS 2021). Locked test patients were not used.
+
+| Region | Dice | IoU | Sensitivity | Precision | HD95 (mm) |
+| --- | --- | --- | --- | --- | --- |
+| TC (tumor core) | 0.717 | 0.598 | 0.741 | 0.792 | 16.2 |
+| WT (whole tumor) | 0.848 | 0.753 | 0.842 | 0.886 | 18.8 |
+| ET (enhancing tumor) | 0.728 | 0.607 | 0.817 | 0.714 | 12.6 |
+| **Mean Dice** | **0.765** | | | | |
+
+HD95 is undefined (NaN) when only one of prediction and ground truth is empty: 1 patient for TC and WT, 5 for ET;
+those patients are left out of the HD95 average. Per-patient scores: `runs/EXP-0001_unet3d_baseline/final_val_per_case.csv`
+on Drive; everything is also in MLflow (`BrainMRI_3D_UNet`, run `EXP-0001`, metrics `final_val_*`).
+
+How the run went (for the M2-T04 comparison and the report):
+- 60 epochs over several Colab sessions (2–7 Oct), resumed from checkpoints after disconnects and Colab GPU limits;
+  one epoch ran on a CPU-only session. Validation on 40 patients after epoch 10 reached 0.808 mean Dice, and no
+  later validation (every 5 epochs up to 60) beat it, so the evaluated model is the epoch 10 one.
+- From epoch 14, some half-precision steps overflowed (NaN loss). Fixes in the code: inputs sanitized (±20 SD),
+  overflowing steps redone in full precision, and only genuinely broken steps skipped (logged as `skipped_steps`,
+  `fp32_retry_steps`). The plateau after epoch 10 is worth checking in M2-T04: a lower learning rate (e.g. 1e-4)
+  or full-precision training may give the baseline a few more points.
+- The 40 patients used during training scored higher (0.808) than the full validation set (0.765): the full set is the
+  number to report.
+
+These are segmentation-accuracy scores of a research prototype on a public dataset, not evidence of clinical performance.
+
 ## What is logged in MLflow
 
 Store: `BrainMRI_Data/mlflow.db` (SQLite on Drive), experiment `BrainMRI_3D_UNet`, run name `EXP-0001`.
