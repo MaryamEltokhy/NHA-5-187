@@ -206,6 +206,13 @@ def forward_loss(model, loss_fn, image, label, device, amp):
     return loss, False
 
 
+def load_scaler_state(scaler, state):
+    """Restore the mixed-precision scaler, unless the checkpoint came from a run without it (CPU session):
+    then the scaler simply starts fresh, which only costs a few skipped steps while it finds its scale again."""
+    if state and scaler.is_enabled():
+        scaler.load_state_dict(state)
+
+
 def _save(path, payload):
     tmp = path.with_suffix(".tmp")
     torch.save(payload, tmp)
@@ -236,7 +243,7 @@ def train(cfg, max_hours=None, resume=True, log=print):
         model.load_state_dict(ck["model"])
         optimizer.load_state_dict(ck["optimizer"])
         scheduler.load_state_dict(ck["scheduler"])
-        scaler.load_state_dict(ck["scaler"])
+        load_scaler_state(scaler, ck["scaler"])
         state = ck["state"]
         log(f"resuming after epoch {state['epoch']} (best mean Dice {state['best_mean_dice']:.4f} at epoch {state['best_epoch']})")
 
