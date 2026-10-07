@@ -196,3 +196,16 @@ def test_half_precision_overflow_is_redone_in_full_precision():
     loss, retried = forward_loss(model, loss_fn, image, label, torch.device("cpu"), amp=False)
     assert not retried and torch.isfinite(loss)
 
+
+def test_resuming_works_across_cpu_and_gpu_sessions():
+    """A checkpoint saved without mixed precision (CPU) must load into a session with it (GPU), and the other way round."""
+    from bmts.segmentation.training.trainer import load_scaler_state
+
+    on = torch.amp.GradScaler("cpu", enabled=True)
+    off = torch.amp.GradScaler("cpu", enabled=False)
+    load_scaler_state(on, off.state_dict())          # CPU checkpoint -> GPU session: starts fresh, no error
+    load_scaler_state(off, on.state_dict())          # GPU checkpoint -> CPU session: nothing to restore
+    saved = torch.amp.GradScaler("cpu", enabled=True, init_scale=128.0)
+    load_scaler_state(on, saved.state_dict())         # normal case still restores the scale
+    assert on.get_scale() == 128.0
+
