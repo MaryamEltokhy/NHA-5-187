@@ -53,7 +53,9 @@ def list_cases(split_csv, processed_root, splits=("train",), datasets=("brats202
     if locked.any() and not allow_lockbox:
         raise LockboxError(f"{int(locked.sum())} requested patients are in the locked test set; "
                            "they may only be loaded by the final evaluation (M5-T02).")
-    rows = rows.sort_values("canonical_subject_id")
+    # longitudinal cohorts (MU, RHUH) have one split row per scan; every scan of a patient is found below anyway,
+    # so keep one row per patient or each scan would be listed once per row
+    rows = rows.drop_duplicates(["dataset_source", "canonical_subject_id"]).sort_values("canonical_subject_id")
     if limit is not None:
         rows = rows.head(limit)
 

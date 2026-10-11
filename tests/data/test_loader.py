@@ -80,6 +80,19 @@ def test_missing_files_stop_or_are_skipped(data):
     assert len(cases) == 2
 
 
+def test_each_scan_of_a_longitudinal_patient_is_listed_once(data, tmp_path):
+    for tp in ("1", "2"):                                    # two more scans of patient 00001: three in total
+        folder = data[0] / "brats2021" / "BraTS2021_00001" / tp
+        folder.mkdir()
+        for f in (data[0] / "brats2021" / "BraTS2021_00001" / "0").iterdir():
+            (folder / f.name).write_bytes(f.read_bytes())
+    table = pd.read_csv(data[1], dtype=str)
+    table = pd.concat([table, table.iloc[[0, 0]]])           # one split row per scan, as MU and RHUH have
+    table.to_csv(tmp_path / "per_scan_split.csv", index=False)
+    ids = [c["id"] for c in list_cases(tmp_path / "per_scan_split.csv", data[0], splits=("train",))]
+    assert ids.count("brats2021__BraTS2021_00001/0") == 1 and len(ids) == 3 + 2
+
+
 def test_limit_keeps_the_first_patients(data):
     assert len(list_cases(data[1], data[0], splits=("train",), limit=2)) == 2
 
