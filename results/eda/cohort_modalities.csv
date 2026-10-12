@@ -1,0 +1,6 @@
+dataset_source,scans,T1_available,T1ce_available,T2_available,FLAIR_available,segmentation_available
+africa,146,146,146,146,146,146
+brats2021,1251,1251,1251,1251,1251,1251
+mu,596,596,596,596,596,594
+rhuh,120,120,120,120,120,120
+utsw,625,625,625,625,625,625

@@ -149,7 +149,14 @@ Share of all brain voxels, BraTS 2021 sample of 150 scans:
 ![Tumor location frequency](../results/eda/figures/f08_location.png)
 
 Share of the 1,063 BraTS 2021 training and validation patients with tumor at each point of the brain (highest value
-along each viewing direction). [Observation to be added after looking at the figure.]
+along each viewing direction).
+- **Tumors appear all over both cerebral hemispheres.** The tumor voxels split about evenly between the left and right
+  halves of the image (49% / 51%).
+- **No single point is shared by many patients.** The most frequent points are in the central part of the
+  hemispheres, next to the lateral ventricles, and are covered by tumor in at most 26.3% of the patients.
+- **The lowest third of the scan is rarely involved.** It holds 7.7% of all tumor voxels; this is the level of the
+  cerebellum and brainstem.
+- **The model must look everywhere:** it cannot rely on one typical tumor position.
 
 ## 7. Separate tumor parts and missing enhancing tumor
 

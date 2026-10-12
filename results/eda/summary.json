@@ -1,0 +1,559 @@
+{
+ "patients": {
+  "africa": {
+   "external": 146,
+   "test": 0,
+   "train": 0,
+   "val": 0
+  },
+  "brats2021": {
+   "external": 0,
+   "test": 188,
+   "train": 875,
+   "val": 188
+  },
+  "mu": {
+   "external": 0,
+   "test": 30,
+   "train": 142,
+   "val": 31
+  },
+  "rhuh": {
+   "external": 0,
+   "test": 6,
+   "train": 28,
+   "val": 6
+  },
+  "utsw": {
+   "external": 625,
+   "test": 0,
+   "train": 0,
+   "val": 0
+  }
+ },
+ "scans": {
+  "africa": {
+   "external": 146,
+   "test": 0,
+   "train": 0,
+   "val": 0
+  },
+  "brats2021": {
+   "external": 0,
+   "test": 188,
+   "train": 875,
+   "val": 188
+  },
+  "mu": {
+   "external": 0,
+   "test": 110,
+   "train": 405,
+   "val": 81
+  },
+  "rhuh": {
+   "external": 0,
+   "test": 18,
+   "train": 84,
+   "val": 18
+  },
+  "utsw": {
+   "external": 625,
+   "test": 0,
+   "train": 0,
+   "val": 0
+  }
+ },
+ "modalities": {
+  "africa": {
+   "scans": 146,
+   "T1_available": 146,
+   "T1ce_available": 146,
+   "T2_available": 146,
+   "FLAIR_available": 146,
+   "segmentation_available": 146
+  },
+  "brats2021": {
+   "scans": 1251,
+   "T1_available": 1251,
+   "T1ce_available": 1251,
+   "T2_available": 1251,
+   "FLAIR_available": 1251,
+   "segmentation_available": 1251
+  },
+  "mu": {
+   "scans": 596,
+   "T1_available": 596,
+   "T1ce_available": 596,
+   "T2_available": 596,
+   "FLAIR_available": 596,
+   "segmentation_available": 594
+  },
+  "rhuh": {
+   "scans": 120,
+   "T1_available": 120,
+   "T1ce_available": 120,
+   "T2_available": 120,
+   "FLAIR_available": 120,
+   "segmentation_available": 120
+  },
+  "utsw": {
+   "scans": 625,
+   "T1_available": 625,
+   "T1ce_available": 625,
+   "T2_available": 625,
+   "FLAIR_available": 625,
+   "segmentation_available": 625
+  }
+ },
+ "tumor": {
+  "brats2021": {
+   "scans": 1063,
+   "patients": 1063,
+   "vol_wt_ml": {
+    "median": 89.47,
+    "q1": 50.24,
+    "q3": 137.98,
+    "min": 2.808,
+    "max": 361.8
+   },
+   "vol_tc_ml": {
+    "median": 28.73,
+    "q1": 12.34,
+    "q3": 52.46,
+    "min": 0.0,
+    "max": 190.2
+   },
+   "vol_et_ml": {
+    "median": 17.94,
+    "q1": 7.36,
+    "q3": 31.71,
+    "min": 0.0,
+    "max": 111.2
+   },
+   "vol_ed_ml": {
+    "median": 52.62,
+    "q1": 26.06,
+    "q3": 85.93,
+    "min": 0.0,
+    "max": 216.4
+   },
+   "vol_ncr_ml": {
+    "median": 7.47,
+    "q1": 1.96,
+    "q3": 19.61,
+    "min": 0.0,
+    "max": 189.2
+   },
+   "vol_rc_ml": {
+    "median": 0.0,
+    "q1": 0.0,
+    "q3": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "share_ncr_of_wt": {
+    "median": 8.83,
+    "q1": 3.2,
+    "q3": 19.38,
+    "min": 0.0,
+    "max": 99.0
+   },
+   "share_ed_of_wt": {
+    "median": 64.72,
+    "q1": 47.46,
+    "q3": 79.04,
+    "min": 0.0,
+    "max": 100.0
+   },
+   "share_et_of_wt": {
+    "median": 21.73,
+    "q1": 12.54,
+    "q3": 32.62,
+    "min": 0.0,
+    "max": 85.5
+   },
+   "no_et": {
+    "n": 30,
+    "pct": 2.8
+   },
+   "no_tumor": 0,
+   "multifocal": {
+    "n": 214,
+    "pct": 20.1
+   },
+   "touches_border": 3,
+   "has_resection_cavity": 0,
+   "shapes": {
+    "240x240x155": 1063
+   },
+   "spacings_mm": {
+    "1x1x1": 1063
+   }
+  },
+  "mu": {
+   "scans": 484,
+   "patients": 173,
+   "vol_wt_ml": {
+    "median": 55.63,
+    "q1": 23.84,
+    "q3": 102.55,
+    "min": 0.0,
+    "max": 376.1
+   },
+   "vol_tc_ml": {
+    "median": 6.21,
+    "q1": 1.2,
+    "q3": 16.24,
+    "min": 0.0,
+    "max": 169.9
+   },
+   "vol_et_ml": {
+    "median": 5.98,
+    "q1": 1.18,
+    "q3": 13.94,
+    "min": 0.0,
+    "max": 103.4
+   },
+   "vol_ed_ml": {
+    "median": 44.87,
+    "q1": 19.88,
+    "q3": 85.89,
+    "min": 0.0,
+    "max": 240.9
+   },
+   "vol_ncr_ml": {
+    "median": 0.02,
+    "q1": 0.0,
+    "q3": 1.36,
+    "min": 0.0,
+    "max": 79.9
+   },
+   "vol_rc_ml": {
+    "median": 3.21,
+    "q1": 0.47,
+    "q3": 11.59,
+    "min": 0.0,
+    "max": 150.5
+   },
+   "share_ncr_of_wt": {
+    "median": 0.03,
+    "q1": 0.0,
+    "q3": 1.92,
+    "min": 0.0,
+    "max": 38.8
+   },
+   "share_ed_of_wt": {
+    "median": 86.49,
+    "q1": 74.35,
+    "q3": 96.05,
+    "min": 0.0,
+    "max": 100.0
+   },
+   "share_et_of_wt": {
+    "median": 11.94,
+    "q1": 3.62,
+    "q3": 22.49,
+    "min": 0.0,
+    "max": 100.0
+   },
+   "no_et": {
+    "n": 37,
+    "pct": 7.6
+   },
+   "no_tumor": 2,
+   "multifocal": {
+    "n": 150,
+    "pct": 31.0
+   },
+   "touches_border": 6,
+   "has_resection_cavity": 425,
+   "shapes": {
+    "240x240x155": 484
+   },
+   "spacings_mm": {
+    "1x1x1": 484
+   }
+  },
+  "rhuh": {
+   "scans": 102,
+   "patients": 34,
+   "vol_wt_ml": {
+    "median": 60.52,
+    "q1": 24.51,
+    "q3": 117.63,
+    "min": 1.047,
+    "max": 258.2
+   },
+   "vol_tc_ml": {
+    "median": 8.7,
+    "q1": 0.29,
+    "q3": 31.47,
+    "min": 0.0,
+    "max": 113.2
+   },
+   "vol_et_ml": {
+    "median": 6.59,
+    "q1": 0.29,
+    "q3": 19.9,
+    "min": 0.0,
+    "max": 84.3
+   },
+   "vol_ed_ml": {
+    "median": 48.02,
+    "q1": 22.53,
+    "q3": 78.06,
+    "min": 1.047,
+    "max": 180.3
+   },
+   "vol_ncr_ml": {
+    "median": 0.4,
+    "q1": 0.0,
+    "q3": 7.4,
+    "min": 0.0,
+    "max": 72.6
+   },
+   "vol_rc_ml": {
+    "median": 0.0,
+    "q1": 0.0,
+    "q3": 0.0,
+    "min": 0.0,
+    "max": 0.0
+   },
+   "share_ncr_of_wt": {
+    "median": 1.07,
+    "q1": 0.0,
+    "q3": 6.73,
+    "min": 0.0,
+    "max": 52.1
+   },
+   "share_ed_of_wt": {
+    "median": 85.47,
+    "q1": 67.56,
+    "q3": 98.91,
+    "min": 23.373,
+    "max": 100.0
+   },
+   "share_et_of_wt": {
+    "median": 10.98,
+    "q1": 1.09,
+    "q3": 21.74,
+    "min": 0.0,
+    "max": 75.0
+   },
+   "no_et": {
+    "n": 22,
+    "pct": 21.6
+   },
+   "no_tumor": 0,
+   "multifocal": {
+    "n": 32,
+    "pct": 31.4
+   },
+   "touches_border": 0,
+   "has_resection_cavity": 0,
+   "shapes": {
+    "240x240x155": 102
+   },
+   "spacings_mm": {
+    "1x1x1": 102
+   }
+  }
+ },
+ "intensity": {
+  "brats2021": {
+   "sample_scans": 150,
+   "brain_ml": {
+    "median": 1468.61,
+    "q1": 1372.1,
+    "q3": 1569.09,
+    "min": 971.126,
+    "max": 1977.3
+   },
+   "wt_share_of_brain_pct": {
+    "median": 5.88,
+    "q1": 3.12,
+    "q3": 9.55,
+    "min": 0.379,
+    "max": 16.4
+   },
+   "tissue_share_of_brain_pct": {
+    "healthy": 93.356,
+    "ed": 4.398,
+    "ncr": 0.899,
+    "et": 1.347
+   },
+   "mean_z": {
+    "t1": {
+     "healthy": 0.01,
+     "ed": 0.04,
+     "ncr": -0.57,
+     "et": -0.18
+    },
+    "t1ce": {
+     "healthy": -0.01,
+     "ed": -0.19,
+     "ncr": -0.37,
+     "et": 2.06
+    },
+    "t2": {
+     "healthy": -0.08,
+     "ed": 0.78,
+     "ncr": 1.78,
+     "et": 0.98
+    },
+    "flair": {
+     "healthy": -0.14,
+     "ed": 1.96,
+     "ncr": 2.35,
+     "et": 2.44
+    }
+   }
+  },
+  "mu": {
+   "sample_scans": 150,
+   "brain_ml": {
+    "median": 1412.19,
+    "q1": 1335.44,
+    "q3": 1515.13,
+    "min": 960.532,
+    "max": 1843.9
+   },
+   "wt_share_of_brain_pct": {
+    "median": 4.08,
+    "q1": 1.64,
+    "q3": 7.72,
+    "min": 0.016,
+    "max": 21.6
+   },
+   "tissue_share_of_brain_pct": {
+    "healthy": 94.554,
+    "ed": 4.236,
+    "ncr": 0.257,
+    "et": 0.953
+   },
+   "mean_z": {
+    "t1": {
+     "healthy": 0.01,
+     "ed": 0.12,
+     "ncr": -0.15,
+     "et": 0.07
+    },
+    "t1ce": {
+     "healthy": 0.0,
+     "ed": -0.1,
+     "ncr": -0.26,
+     "et": 1.84
+    },
+    "t2": {
+     "healthy": -0.07,
+     "ed": 0.62,
+     "ncr": 1.45,
+     "et": 1.03
+    },
+    "flair": {
+     "healthy": -0.09,
+     "ed": 1.62,
+     "ncr": 1.47,
+     "et": 1.5
+    }
+   }
+  },
+  "rhuh": {
+   "sample_scans": 102,
+   "brain_ml": {
+    "median": 1489.93,
+    "q1": 1422.0,
+    "q3": 1580.2,
+    "min": 1157.596,
+    "max": 1764.8
+   },
+   "wt_share_of_brain_pct": {
+    "median": 4.15,
+    "q1": 1.59,
+    "q3": 7.64,
+    "min": 0.071,
+    "max": 16.6
+   },
+   "tissue_share_of_brain_pct": {
+    "healthy": 94.953,
+    "ed": 3.758,
+    "ncr": 0.393,
+    "et": 0.897
+   },
+   "mean_z": {
+    "t1": {
+     "healthy": -0.01,
+     "ed": 0.36,
+     "ncr": -0.41,
+     "et": 0.01
+    },
+    "t1ce": {
+     "healthy": -0.01,
+     "ed": -0.14,
+     "ncr": -0.47,
+     "et": 2.24
+    },
+    "t2": {
+     "healthy": -0.05,
+     "ed": 0.62,
+     "ncr": 2.02,
+     "et": 1.03
+    },
+    "flair": {
+     "healthy": -0.09,
+     "ed": 1.99,
+     "ncr": 0.96,
+     "et": 1.41
+    }
+   }
+  }
+ },
+ "spearman_ed_vs_tc_brats2021": 0.32,
+ "train_vs_val_ks_p": {
+  "vol_wt_ml": 0.197,
+  "vol_tc_ml": 0.072,
+  "vol_et_ml": 0.216
+ },
+ "difficult_cases": {
+  "10 smallest whole tumors": 10,
+  "3 or more separate tumor parts": 121,
+  "no enhancing tumor in the expert mask": 89,
+  "tumor touches the scan edge": 9
+ },
+ "dice_vs_volume": {
+  "cases": 188,
+  "WT": {
+   "spearman": 0.15,
+   "median_dice_smallest_quarter": 0.944,
+   "median_dice_other": 0.958
+  },
+  "TC": {
+   "spearman": 0.25,
+   "median_dice_smallest_quarter": 0.933,
+   "median_dice_other": 0.969
+  },
+  "ET": {
+   "spearman": 0.34,
+   "median_dice_smallest_quarter": 0.872,
+   "median_dice_other": 0.94
+  }
+ },
+ "raw_p99_range": {
+  "t1": [
+   338.0,
+   3334.0
+  ],
+  "t1ce": [
+   2739.0,
+   6483.0
+  ],
+  "t2": [
+   748.0,
+   2246.0
+  ],
+  "flair": [
+   682.0,
+   3309.0
+  ]
+ }
+}

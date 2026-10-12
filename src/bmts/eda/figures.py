@@ -140,17 +140,21 @@ def multiplanar(vols, centre, label, out):
 def volumes(df, out):
     """Distribution of tumor volumes per region and cohort (log scale: sizes span three orders of magnitude)."""
     regions = (("vol_wt_ml", "Whole tumor (WT)"), ("vol_tc_ml", "Tumor core (TC)"), ("vol_et_ml", "Enhancing tumor (ET)"))
-    bins = np.logspace(-1, np.log10(max(df.vol_wt_ml.max(), 1) * 1.1), 40)
-    fig, axes = plt.subplots(1, 3, figsize=(12, 3.4), sharey=False)
+    low = 0.1                                                # smaller volumes (and empty regions) are counted, not drawn
+    bins = np.logspace(np.log10(low), np.log10(max(df.vol_wt_ml.max(), 1) * 1.1), 25)
+    fig, axes = plt.subplots(1, 3, figsize=(12, 3.6), sharey=False)
     for ax, (col, title) in zip(axes, regions):
         for c in _cohort_order(df.dataset):
             v = df.loc[df.dataset == c, col]
-            v = v[v > 0]
-            ax.hist(v, bins=bins, histtype="step", linewidth=2, color=COHORT_COLORS[c],
-                    label=f"{COHORT_NAMES[c]} (median {v.median():.0f} mL)", density=True)
+            shown = v[v >= low]
+            # each bar = % of ALL scans of the cohort, so cohorts of different size and bins of different width compare
+            ax.hist(shown, bins=bins, histtype="step", linewidth=2, color=COHORT_COLORS[c],
+                    weights=np.full(len(shown), 100 / len(v)),
+                    label=f"{COHORT_NAMES[c]}: median {v.median():.1f} mL, {int((v < low).sum())} under {low} mL")
         ax.set_xscale("log")
-        ax.set(title=title, xlabel="volume (mL, log scale)", ylabel="share of scans (density)")
-        ax.legend(fontsize=7.5, loc="upper left")
+        ax.set(title=title, xlabel="volume (mL, log scale)", ylabel="% of scans")
+        ax.legend(fontsize=7, loc="upper left")
+        ax.set_ylim(0, ax.get_ylim()[1] * 1.35)                  # room for the legend
     fig.tight_layout()
     return _save(fig, out, "f05_volumes")
 
