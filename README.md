@@ -14,7 +14,7 @@ change over time, radiomics, a confidence map and a web app.
 
 | Milestone | State |
 | --- | --- |
-| M1 – Data foundation | Done: datasets downloaded, every file checksummed, scans cleaned, patients split (locked test set) |
+| M1 – Data foundation | Done: datasets downloaded, every file checksummed, scans cleaned, patients split (locked test set), [EDA report](docs/EDA_REPORT.md) |
 | M2 – Segmentation model | Done; model card awaiting team approval |
 | M3 – Analysis (volumes, change over time, radiomics, confidence map) | Starting |
 | M4 – App and deployment, M5 – Final tests and delivery | Planned |
@@ -33,6 +33,8 @@ These are validation scores of a research prototype on a public dataset, not evi
 Training uses **BraTS 2021** only; RHUH-GBM, MU-Glioma-Post, BraTS-Africa and UTSW-Glioma are kept for external tests
 and the change-over-time module. Reasons, licenses and download steps: [`docs/dataset_research.md`](docs/dataset_research.md),
 [`docs/DATA_DOWNLOAD.md`](docs/DATA_DOWNLOAD.md), [`docs/DATASETS_M1_T01.md`](docs/DATASETS_M1_T01.md).
+What the data looks like (cohort sizes, tumor sizes and composition, class imbalance, tumor location, intensities,
+difficult cases, with charts): [`docs/EDA_REPORT.md`](docs/EDA_REPORT.md), made by `notebooks/06_eda.ipynb`.
 
 **No MRI data, model weights or keys are stored in this repository** (it is public). The data and checkpoints live on
 the team's Google Drive; the repository keeps only code, configs, small result files and the patient lists with checksums
@@ -45,10 +47,10 @@ the team's Google Drive; the repository keeps only code, configs, small result f
 | `src/bmts/` | Python package: scan cleaning (`data/cleaning`), data loader (`data/datasets`, `data/augmentation`), metrics (`evaluation`), 3D U-Net model and training loop (`segmentation`) |
 | `configs/` | YAML settings for data, models and experiments (`training/EXP-0001.yaml`) |
 | `scripts/` | Command-line tools: `download_data.py`, `smoke_train.py`, `train.py` |
-| `notebooks/` | Colab notebooks, numbered in the order they are used (download → patient list → loader test → training), plus the M2 comparison and viewer notebooks |
+| `notebooks/` | Colab notebooks, numbered in the order they are used (download → patient list → loader test → training → EDA), plus the M2 comparison and viewer notebooks |
 | `apps/` | MRI slice viewer with the tumor mask on top (Streamlit) |
 | `models/registry/` | Registered model versions: model card, manifest, inference settings (weights on Drive) |
-| `results/` | Small result files, e.g. the M2-T04 model comparison |
+| `results/` | Small result files: EDA tables and charts (`eda/`), the M2-T04 model comparison |
 | `data/manifests/` | Patient list and per-file SHA-256 checksums of every dataset |
 | `docs/` | Project structure, dataset research, how-to guides and results |
 | `tests/` | Automated tests (`pytest tests`) |
