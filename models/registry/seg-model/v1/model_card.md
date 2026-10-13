@@ -47,6 +47,12 @@ Baseline for comparison, 3D U-Net (EXP-0001): mean Dice 0.765. nnU-Net scored hi
   
 ## Approval (M2-T06)
 
-| Name | Role | OK (date) |
+
+| Name | Role | OK |
 | --- | --- | --- |
-| | | |
+| Alaa Emad | M2-T04 (nnU-Net vs 3D U-Net) | OK |
+| Mohamed Tagy | M2-T03 (3D U-Net baseline) | OK |
+| Maryam Ahmed | M2-T01 (experiment tracking) | OK |
+| Yasmin Mahmoud | M2-T02 (evaluation metrics) | OK |
+| Essam Mohamed | M2-T05 (slice viewer) | OK |
+
