@@ -31,6 +31,8 @@ def test_entropy_limits():
     assert entropy(np.full((4, 2), 0.25))[0] == pytest.approx(1.0)
     assert entropy(onehot(np.zeros(3, int), sure=1.0)).max() < 1e-6
     assert binary_entropy(np.array([0.5]))[0] == pytest.approx(1.0) and binary_entropy(np.array([1.0]))[0] < 1e-6
+    sure = binary_entropy(np.array([0.0, 1.0], dtype=np.float32))    # model output is float32; must not give NaN
+    assert np.isfinite(sure).all() and sure.max() < 1e-6
 
 
 def test_region_probabilities_follow_regions():

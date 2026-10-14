@@ -35,7 +35,8 @@ def entropy(probs, axis=0):
 
 def binary_entropy(p):
     """Entropy of a yes/no probability in bits (0..1): 1 at p = 0.5, 0 at p = 0 or 1."""
-    p = np.clip(p, EPS, 1 - EPS)
+    # float64: in float32, 1 - 1e-8 rounds to 1.0, so p = 1 gave 0 * log(0) = NaN
+    p = np.clip(np.asarray(p, dtype=np.float64), EPS, 1 - EPS)
     return -(p * np.log2(p) + (1 - p) * np.log2(1 - p))
 
 
