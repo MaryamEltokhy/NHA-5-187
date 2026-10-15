@@ -74,8 +74,16 @@ tumor. The M3-T05 pipeline can report these next to the volumes.
 **The mask is unchanged.** Dice is exactly seg-model v1's (TC 0.917, WT 0.935, ET 0.872). Running the 8 passes
 separately and averaging them gives the same mask as `nnUNetv2_predict`.
 
-**The probabilities are well calibrated.** The expected calibration error (ECE) is below 0.5 % in every region: when
-the model gives a voxel a probability of 70 %, about 70 % of such voxels really are in the region.
+**The overall calibration error is small, but the in-between probabilities are too low:**
+- **Why ECE is small.** The expected calibration error is below 0.5 % in every region, mostly because almost every
+  brain voxel gets a probability near 0 or near 1, and those are right.
+- **The in-between range (the reliability diagram below).** The voxels with in-between probabilities are the tumor
+  border, where the confidence map lights up:
+  - **Below about 0.7 the probabilities are too low.** Of the voxels given about 10 %, roughly a quarter (WT, ET) to a
+    third (TC) really are in the region. Of those given about 50 %, roughly 60 % are.
+  - **Above 0.7 they are close to right,** slightly too high near 0.9 for TC and ET.
+- **What this means:** at the tumor border, the true region tends to reach a little further than the model's
+  probabilities suggest. Read the probabilities there as a ranking (more or less likely), not as exact percentages.
 
 ![Reliability diagram](../results/M3-T04/figures/f02_reliability.png)
 
