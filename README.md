@@ -16,7 +16,7 @@ change over time, radiomics, a confidence map and a web app.
 | --- | --- |
 | M1 – Data foundation | Done: datasets downloaded, every file checksummed, scans cleaned, patients split (locked test set), [EDA report](docs/EDA_REPORT.md) |
 | M2 – Segmentation model | Done; model card awaiting team approval |
-| M3 – Analysis (volumes, change over time, radiomics, confidence map) | Starting |
+| M3 – Analysis (volumes, change over time, radiomics, confidence map) | In progress: tumor volumes (M3-T01) and [confidence maps](docs/UNCERTAINTY.md) (M3-T04) done |
 | M4 – App and deployment, M5 – Final tests and delivery | Planned |
 
 Scores on the 188 BraTS 2021 validation patients (the locked test patients have not been used yet):

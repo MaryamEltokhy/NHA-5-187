@@ -1,0 +1,44 @@
+{
+ "cases": 188,
+ "passes_per_case": 8,
+ "dice_mean": {
+  "TC": 0.917,
+  "WT": 0.9346,
+  "ET": 0.8717
+ },
+ "ece": {
+  "TC": 0.00232,
+  "WT": 0.00431,
+  "ET": 0.00169
+ },
+ "error_auroc": {
+  "TC": 0.8887,
+  "WT": 0.9431,
+  "ET": 0.8903
+ },
+ "errors_flagged": {
+  "TC": {
+   "share_of_wrong_voxels_uncertain": 0.3921,
+   "share_of_all_voxels_uncertain": 0.00327
+  },
+  "WT": {
+   "share_of_wrong_voxels_uncertain": 0.4741,
+   "share_of_all_voxels_uncertain": 0.0107
+  },
+  "ET": {
+   "share_of_wrong_voxels_uncertain": 0.4113,
+   "share_of_all_voxels_uncertain": 0.00282
+  }
+ },
+ "spearman_uncertainty_vs_dice": {
+  "TC": -0.806,
+  "WT": -0.676,
+  "ET": -0.681
+ },
+ "worst_quarter_caught": {
+  "TC": 0.723,
+  "WT": 0.681,
+  "ET": 0.702
+ },
+ "seconds_per_case": 20.6
+}
