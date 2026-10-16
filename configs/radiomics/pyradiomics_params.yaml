@@ -1,0 +1,20 @@
+# PyRadiomics settings for M3-T03 (agreed with the team).
+# Images are already z-scored inside the brain, 1 mm isotropic, RAS, so no normalize and no resampling.
+imageType:
+  Original: {}
+
+featureClass:
+  shape:
+  firstorder:
+  glcm:
+  glrlm:
+  glszm:
+  gldm:
+  ngtdm:
+
+setting:
+  binWidth: 0.25
+  normalize: false
+  resampledPixelSpacing:
+  label: 1
+  force2D: false
