@@ -1,0 +1,9 @@
+# M3-T03 radiomics. The pyradiomics release on PyPI does not build on Python 3.12 or newer, so it is installed from GitHub.
+# Pinned to the commit used for results/M3-T03 (version string 3.1.1.dev111+g8ed579383).
+pyradiomics @ git+https://github.com/AIM-Harvard/pyradiomics.git@8ed579383b44806651c463d5e691f3b2b57522ab
+SimpleITK
+nibabel>=5.2
+numpy
+pandas>=2.0
+tqdm
+pytest>=8
