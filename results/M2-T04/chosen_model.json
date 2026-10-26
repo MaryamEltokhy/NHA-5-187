@@ -1,0 +1,23 @@
+{
+  "chosen_model": "nnU-Net",
+  "selection_metric": "mean Dice over TC, WT, ET on all validation patients (split_v1)",
+  "n_val_patients": 188,
+  "mean_dice": {
+    "3D U-Net": 0.7645918875907934,
+    "nnU-Net": 0.9078128388140568
+  },
+  "unet3d": {
+    "experiment": "EXP-0001",
+    "weights": "/content/drive/MyDrive/BrainMRI_Data/runs/EXP-0001_unet3d_baseline/best.pt",
+    "budget": "60 epochs x 200 steps"
+  },
+  "nnunet": {
+    "dataset": "Dataset501_BraTS2021",
+    "configuration": "3d_fullres",
+    "fold": 0,
+    "trainer": "nnUNetTrainer_50epochs",
+    "checkpoint": "checkpoint_best.pth",
+    "results_dir": "/content/drive/MyDrive/BrainMRI_Data/runs/M2-T04_nnunet/nnUNet_results/Dataset501_BraTS2021/nnUNetTrainer_50epochs__nnUNetPlans__3d_fullres"
+  },
+  "splits_file": "/content/drive/MyDrive/BrainMRI_Data/runs/M2-T04_nnunet/splits_final.json"
+}

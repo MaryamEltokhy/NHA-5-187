@@ -1,0 +1,230 @@
+reason,id,dataset,split,vol_wt_ml,vol_tc_ml,vol_et_ml,wt_components
+10 smallest whole tumors,mu__PatientID_0271/Timepoint_6,mu,train,0.127,0.0,0.0,1
+10 smallest whole tumors,mu__PatientID_0156/Timepoint_2,mu,val,0.232,0.0,0.0,1
+10 smallest whole tumors,mu__PatientID_0244/Timepoint_1,mu,train,0.294,0.0,0.0,1
+10 smallest whole tumors,mu__PatientID_0197/Timepoint_1,mu,train,0.307,0.307,0.307,1
+10 smallest whole tumors,mu__PatientID_0242/Timepoint_3,mu,val,0.801,0.0,0.0,1
+10 smallest whole tumors,mu__PatientID_0159/Timepoint_3,mu,train,0.8250000000000001,0.395,0.395,3
+10 smallest whole tumors,mu__PatientID_0271/Timepoint_3,mu,train,1.047,0.0,0.0,1
+10 smallest whole tumors,rhuh__RHUH-0003/1.0,rhuh,train,1.047,0.0,0.0,1
+10 smallest whole tumors,mu__PatientID_0085/Timepoint_3,mu,train,1.203,0.993,0.993,1
+10 smallest whole tumors,mu__PatientID_0208/Timepoint_2,mu,train,1.4060000000000001,0.9490000000000001,0.9490000000000001,2
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01179/0,brats2021,train,105.31400000000001,0.0,0.0,2
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01350/0,brats2021,train,25.783,0.0,0.0,1
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01433/0,brats2021,train,64.107,5.522,0.0,1
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01434/0,brats2021,train,30.44,4.487,0.0,1
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01436/0,brats2021,train,61.746,43.406,0.0,1
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01437/0,brats2021,train,53.27,28.736,0.0,1
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01439/0,brats2021,train,18.89,9.329,0.0,1
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01440/0,brats2021,train,35.439,20.173000000000002,0.0,1
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01477/0,brats2021,train,195.433,77.985,0.0,2
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01480/0,brats2021,train,34.7,10.557,0.0,1
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01483/0,brats2021,val,107.864,59.424,0.0,1
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01484/0,brats2021,train,162.703,135.025,0.0,1
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01491/0,brats2021,train,23.844,21.004,0.0,1
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01499/0,brats2021,train,82.81400000000001,36.124,0.0,1
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01502/0,brats2021,train,74.866,24.514,0.0,1
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01509/0,brats2021,val,31.17,27.85,0.0,1
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01510/0,brats2021,train,125.421,71.627,0.0,4
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01511/0,brats2021,train,180.72400000000002,97.10300000000001,0.0,1
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01515/0,brats2021,train,175.367,93.99,0.0,1
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01517/0,brats2021,train,158.53900000000002,65.33,0.0,1
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01524/0,brats2021,train,116.994,83.60300000000001,0.0,3
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01526/0,brats2021,train,65.33800000000001,28.605,0.0,1
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01529/0,brats2021,train,68.293,50.291000000000004,0.0,1
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01534/0,brats2021,train,62.935,45.782000000000004,0.0,1
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01535/0,brats2021,val,53.625,32.724000000000004,0.0,1
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01551/0,brats2021,train,18.958000000000002,0.0,0.0,1
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01558/0,brats2021,train,66.343,0.0,0.0,1
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01624/0,brats2021,train,33.56,0.0,0.0,1
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01637/0,brats2021,train,7.089,0.0,0.0,1
+no enhancing tumor in the expert mask,brats2021__BraTS2021_01666/0,brats2021,train,135.746,60.126000000000005,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0029/Timepoint_4,mu,train,45.405,0.0,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0030/Timepoint_1,mu,train,56.832,0.0,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0066/Timepoint_5,mu,train,44.929,0.0,0.0,2
+no enhancing tumor in the expert mask,mu__PatientID_0066/Timepoint_6,mu,train,70.47,0.0,0.0,2
+no enhancing tumor in the expert mask,mu__PatientID_0074/Timepoint_6,mu,train,28.823,0.0,0.0,3
+no enhancing tumor in the expert mask,mu__PatientID_0089/Timepoint_4,mu,val,86.651,0.0,0.0,4
+no enhancing tumor in the expert mask,mu__PatientID_0156/Timepoint_1,mu,val,17.666,0.0,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0156/Timepoint_2,mu,val,0.232,0.0,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0156/Timepoint_3,mu,val,3.766,0.0,0.0,2
+no enhancing tumor in the expert mask,mu__PatientID_0191/Timepoint_2,mu,train,11.353,0.0,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0192/Timepoint_1,mu,train,14.757,0.0,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0192/Timepoint_2,mu,train,14.634,0.0,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0192/Timepoint_3,mu,train,16.057,0.0,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0195/Timepoint_1,mu,val,25.987000000000002,0.0,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0195/Timepoint_2,mu,val,24.132,0.0,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0195/Timepoint_3,mu,val,15.311,0.0,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0196/Timepoint_2,mu,val,5.635,0.0,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0196/Timepoint_3,mu,val,5.824,0.0,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0197/Timepoint_2,mu,train,0.0,0.0,0.0,0
+no enhancing tumor in the expert mask,mu__PatientID_0197/Timepoint_3,mu,train,0.0,0.0,0.0,0
+no enhancing tumor in the expert mask,mu__PatientID_0202/Timepoint_1,mu,train,15.825000000000001,0.0,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0202/Timepoint_2,mu,train,26.835,0.0,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0213/Timepoint_1,mu,train,23.097,0.0,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0220/Timepoint_6,mu,train,6.7330000000000005,0.0,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0239/Timepoint_1,mu,train,12.644,0.0,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0242/Timepoint_3,mu,val,0.801,0.0,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0242/Timepoint_6,mu,val,1.55,0.0,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0244/Timepoint_1,mu,train,0.294,0.0,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0255/Timepoint_1,mu,train,10.013,0.0,0.0,2
+no enhancing tumor in the expert mask,mu__PatientID_0255/Timepoint_2,mu,train,5.151,0.0,0.0,2
+no enhancing tumor in the expert mask,mu__PatientID_0260/Timepoint_1,mu,train,9.087,0.0,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0260/Timepoint_2,mu,train,31.233,0.0,0.0,3
+no enhancing tumor in the expert mask,mu__PatientID_0264/Timepoint_2,mu,train,45.501,0.0,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0271/Timepoint_3,mu,train,1.047,0.0,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0271/Timepoint_6,mu,train,0.127,0.0,0.0,1
+no enhancing tumor in the expert mask,mu__PatientID_0275/Timepoint_3,mu,train,4.003,0.0,0.0,3
+no enhancing tumor in the expert mask,mu__PatientID_0275/Timepoint_6,mu,train,14.536,0.0,0.0,1
+no enhancing tumor in the expert mask,rhuh__RHUH-0001/1.0,rhuh,train,25.167,0.0,0.0,2
+no enhancing tumor in the expert mask,rhuh__RHUH-0002/1.0,rhuh,train,6.641,0.0,0.0,1
+no enhancing tumor in the expert mask,rhuh__RHUH-0003/1.0,rhuh,train,1.047,0.0,0.0,1
+no enhancing tumor in the expert mask,rhuh__RHUH-0004/1.0,rhuh,train,45.382,0.0,0.0,3
+no enhancing tumor in the expert mask,rhuh__RHUH-0006/1.0,rhuh,train,42.157000000000004,0.0,0.0,1
+no enhancing tumor in the expert mask,rhuh__RHUH-0008/1.0,rhuh,train,27.929000000000002,0.0,0.0,1
+no enhancing tumor in the expert mask,rhuh__RHUH-0009/1.0,rhuh,train,107.691,0.0,0.0,1
+no enhancing tumor in the expert mask,rhuh__RHUH-0010/1.0,rhuh,val,20.944,0.0,0.0,2
+no enhancing tumor in the expert mask,rhuh__RHUH-0011/1.0,rhuh,train,22.911,0.0,0.0,1
+no enhancing tumor in the expert mask,rhuh__RHUH-0012/1.0,rhuh,train,61.987,0.0,0.0,1
+no enhancing tumor in the expert mask,rhuh__RHUH-0015/1.0,rhuh,train,24.993000000000002,0.0,0.0,2
+no enhancing tumor in the expert mask,rhuh__RHUH-0021/1.0,rhuh,train,32.982,0.0,0.0,1
+no enhancing tumor in the expert mask,rhuh__RHUH-0022/1.0,rhuh,train,9.436,0.0,0.0,1
+no enhancing tumor in the expert mask,rhuh__RHUH-0024/1.0,rhuh,train,2.886,0.0,0.0,2
+no enhancing tumor in the expert mask,rhuh__RHUH-0025/1.0,rhuh,train,6.4910000000000005,0.0,0.0,2
+no enhancing tumor in the expert mask,rhuh__RHUH-0033/1.0,rhuh,train,14.438,0.0,0.0,1
+no enhancing tumor in the expert mask,rhuh__RHUH-0034/1.0,rhuh,train,35.127,0.0,0.0,1
+no enhancing tumor in the expert mask,rhuh__RHUH-0035/1.0,rhuh,train,20.068,0.0,0.0,1
+no enhancing tumor in the expert mask,rhuh__RHUH-0036/1.0,rhuh,train,23.636,0.0,0.0,1
+no enhancing tumor in the expert mask,rhuh__RHUH-0037/1.0,rhuh,train,10.387,0.0,0.0,1
+no enhancing tumor in the expert mask,rhuh__RHUH-0038/1.0,rhuh,val,81.822,0.0,0.0,1
+no enhancing tumor in the expert mask,rhuh__RHUH-0039/1.0,rhuh,train,59.807,0.0,0.0,1
+3 or more separate tumor parts,brats2021__BraTS2021_00117/0,brats2021,train,75.08500000000001,17.927,7.337,3
+3 or more separate tumor parts,brats2021__BraTS2021_00132/0,brats2021,train,129.841,58.843,50.084,4
+3 or more separate tumor parts,brats2021__BraTS2021_00136/0,brats2021,train,57.168,19.273,15.114,3
+3 or more separate tumor parts,brats2021__BraTS2021_00151/0,brats2021,train,186.689,95.022,79.009,3
+3 or more separate tumor parts,brats2021__BraTS2021_00242/0,brats2021,train,166.996,53.997,26.322,3
+3 or more separate tumor parts,brats2021__BraTS2021_00286/0,brats2021,train,77.815,16.139,15.501,6
+3 or more separate tumor parts,brats2021__BraTS2021_00296/0,brats2021,val,33.412,10.322000000000001,8.897,6
+3 or more separate tumor parts,brats2021__BraTS2021_00305/0,brats2021,train,57.981,5.667,3.81,4
+3 or more separate tumor parts,brats2021__BraTS2021_00387/0,brats2021,train,19.476,14.747,11.118,4
+3 or more separate tumor parts,brats2021__BraTS2021_00406/0,brats2021,train,69.772,17.602,14.178,3
+3 or more separate tumor parts,brats2021__BraTS2021_00442/0,brats2021,train,44.986000000000004,31.041,12.998000000000001,4
+3 or more separate tumor parts,brats2021__BraTS2021_00528/0,brats2021,train,226.72,59.752,53.410000000000004,3
+3 or more separate tumor parts,brats2021__BraTS2021_00559/0,brats2021,train,158.833,74.792,45.584,3
+3 or more separate tumor parts,brats2021__BraTS2021_00565/0,brats2021,train,83.29,30.589000000000002,22.483,3
+3 or more separate tumor parts,brats2021__BraTS2021_00591/0,brats2021,train,147.383,64.008,38.523,4
+3 or more separate tumor parts,brats2021__BraTS2021_00602/0,brats2021,train,36.091,21.567,21.449,4
+3 or more separate tumor parts,brats2021__BraTS2021_00623/0,brats2021,train,165.827,25.964000000000002,19.086000000000002,4
+3 or more separate tumor parts,brats2021__BraTS2021_00638/0,brats2021,val,142.363,8.638,8.51,4
+3 or more separate tumor parts,brats2021__BraTS2021_00650/0,brats2021,train,85.611,18.606,18.012,4
+3 or more separate tumor parts,brats2021__BraTS2021_00676/0,brats2021,train,76.003,51.686,26.455000000000002,3
+3 or more separate tumor parts,brats2021__BraTS2021_00757/0,brats2021,train,66.997,38.835,26.749000000000002,4
+3 or more separate tumor parts,brats2021__BraTS2021_00830/0,brats2021,train,69.606,15.613,14.725,3
+3 or more separate tumor parts,brats2021__BraTS2021_00837/0,brats2021,train,24.696,4.211,2.971,5
+3 or more separate tumor parts,brats2021__BraTS2021_01003/0,brats2021,val,127.812,82.014,33.404,3
+3 or more separate tumor parts,brats2021__BraTS2021_01008/0,brats2021,train,42.17,7.688,6.934,4
+3 or more separate tumor parts,brats2021__BraTS2021_01027/0,brats2021,train,66.111,10.325000000000001,9.338000000000001,4
+3 or more separate tumor parts,brats2021__BraTS2021_01048/0,brats2021,train,56.831,41.09,26.169,3
+3 or more separate tumor parts,brats2021__BraTS2021_01050/0,brats2021,val,34.159,7.151,6.878,3
+3 or more separate tumor parts,brats2021__BraTS2021_01051/0,brats2021,train,88.075,28.246000000000002,12.228,7
+3 or more separate tumor parts,brats2021__BraTS2021_01057/0,brats2021,train,38.775,18.544,11.516,4
+3 or more separate tumor parts,brats2021__BraTS2021_01064/0,brats2021,train,33.518,1.606,1.227,8
+3 or more separate tumor parts,brats2021__BraTS2021_01067/0,brats2021,train,149.70000000000002,16.238,13.989,3
+3 or more separate tumor parts,brats2021__BraTS2021_01068/0,brats2021,train,39.011,5.672,3.0420000000000003,3
+3 or more separate tumor parts,brats2021__BraTS2021_01071/0,brats2021,train,108.878,12.482000000000001,9.105,3
+3 or more separate tumor parts,brats2021__BraTS2021_01079/0,brats2021,train,226.241,103.746,44.28,3
+3 or more separate tumor parts,brats2021__BraTS2021_01106/0,brats2021,train,38.671,19.037,14.142,3
+3 or more separate tumor parts,brats2021__BraTS2021_01138/0,brats2021,val,134.095,15.716000000000001,12.103,5
+3 or more separate tumor parts,brats2021__BraTS2021_01153/0,brats2021,train,168.082,86.274,53.651,3
+3 or more separate tumor parts,brats2021__BraTS2021_01165/0,brats2021,train,72.263,32.927,27.764,3
+3 or more separate tumor parts,brats2021__BraTS2021_01172/0,brats2021,val,114.3,106.95400000000001,77.747,3
+3 or more separate tumor parts,brats2021__BraTS2021_01253/0,brats2021,train,95.815,79.911,35.31,3
+3 or more separate tumor parts,brats2021__BraTS2021_01258/0,brats2021,train,59.246,15.461,8.665000000000001,3
+3 or more separate tumor parts,brats2021__BraTS2021_01262/0,brats2021,train,160.01,34.929,15.631,5
+3 or more separate tumor parts,brats2021__BraTS2021_01263/0,brats2021,train,57.83,35.286,12.743,3
+3 or more separate tumor parts,brats2021__BraTS2021_01279/0,brats2021,train,15.718,2.862,2.777,5
+3 or more separate tumor parts,brats2021__BraTS2021_01283/0,brats2021,train,143.75900000000001,39.933,35.721000000000004,4
+3 or more separate tumor parts,brats2021__BraTS2021_01286/0,brats2021,train,100.724,28.125,21.853,3
+3 or more separate tumor parts,brats2021__BraTS2021_01295/0,brats2021,train,38.684,24.987000000000002,15.671000000000001,3
+3 or more separate tumor parts,brats2021__BraTS2021_01297/0,brats2021,train,67.70400000000001,8.648,6.929,5
+3 or more separate tumor parts,brats2021__BraTS2021_01311/0,brats2021,train,97.479,51.325,50.137,3
+3 or more separate tumor parts,brats2021__BraTS2021_01354/0,brats2021,train,61.579,16.017,9.6,5
+3 or more separate tumor parts,brats2021__BraTS2021_01366/0,brats2021,train,15.026,0.681,0.612,3
+3 or more separate tumor parts,brats2021__BraTS2021_01369/0,brats2021,train,56.813,6.845,4.833,3
+3 or more separate tumor parts,brats2021__BraTS2021_01370/0,brats2021,train,76.764,2.879,2.668,6
+3 or more separate tumor parts,brats2021__BraTS2021_01399/0,brats2021,train,29.88,14.013,12.057,4
+3 or more separate tumor parts,brats2021__BraTS2021_01409/0,brats2021,train,38.696,28.107,25.748,5
+3 or more separate tumor parts,brats2021__BraTS2021_01417/0,brats2021,val,61.085,26.191,21.677,3
+3 or more separate tumor parts,brats2021__BraTS2021_01429/0,brats2021,train,149.341,36.252,19.84,3
+3 or more separate tumor parts,brats2021__BraTS2021_01469/0,brats2021,val,52.716,6.118,4.9510000000000005,3
+3 or more separate tumor parts,brats2021__BraTS2021_01478/0,brats2021,train,230.882,112.063,1.276,3
+3 or more separate tumor parts,brats2021__BraTS2021_01510/0,brats2021,train,125.421,71.627,0.0,4
+3 or more separate tumor parts,brats2021__BraTS2021_01524/0,brats2021,train,116.994,83.60300000000001,0.0,3
+3 or more separate tumor parts,brats2021__BraTS2021_01525/0,brats2021,train,37.466,10.33,8.358,3
+3 or more separate tumor parts,brats2021__BraTS2021_01545/0,brats2021,train,38.243,7.582,6.687,3
+3 or more separate tumor parts,brats2021__BraTS2021_01578/0,brats2021,train,205.436,81.806,67.825,3
+3 or more separate tumor parts,brats2021__BraTS2021_01644/0,brats2021,train,32.098,16.075,16.075,5
+3 or more separate tumor parts,brats2021__BraTS2021_01645/0,brats2021,train,97.705,5.828,5.789,4
+3 or more separate tumor parts,mu__PatientID_0018/Timepoint_6,mu,val,190.25,137.80100000000002,91.726,3
+3 or more separate tumor parts,mu__PatientID_0022/Timepoint_3,mu,val,92.744,1.954,1.954,3
+3 or more separate tumor parts,mu__PatientID_0026/Timepoint_2,mu,val,88.824,10.411,9.629,4
+3 or more separate tumor parts,mu__PatientID_0032/Timepoint_6,mu,val,190.39600000000002,142.03900000000002,91.727,3
+3 or more separate tumor parts,mu__PatientID_0034/Timepoint_1,mu,train,5.349,1.153,1.153,7
+3 or more separate tumor parts,mu__PatientID_0071/Timepoint_1,mu,train,118.435,56.282000000000004,54.932,3
+3 or more separate tumor parts,mu__PatientID_0074/Timepoint_2,mu,train,32.411,1.186,1.186,3
+3 or more separate tumor parts,mu__PatientID_0074/Timepoint_3,mu,train,22.0,0.091,0.091,3
+3 or more separate tumor parts,mu__PatientID_0074/Timepoint_4,mu,train,42.129,4.211,4.127,6
+3 or more separate tumor parts,mu__PatientID_0074/Timepoint_5,mu,train,27.062,0.082,0.082,5
+3 or more separate tumor parts,mu__PatientID_0074/Timepoint_6,mu,train,28.823,0.0,0.0,3
+3 or more separate tumor parts,mu__PatientID_0083/Timepoint_3,mu,train,137.352,27.59,27.574,3
+3 or more separate tumor parts,mu__PatientID_0084/Timepoint_6,mu,train,60.702,1.818,1.818,3
+3 or more separate tumor parts,mu__PatientID_0085/Timepoint_4,mu,train,3.081,1.734,1.734,4
+3 or more separate tumor parts,mu__PatientID_0089/Timepoint_3,mu,val,72.274,3.067,3.067,4
+3 or more separate tumor parts,mu__PatientID_0089/Timepoint_4,mu,val,86.651,0.0,0.0,4
+3 or more separate tumor parts,mu__PatientID_0089/Timepoint_5,mu,val,95.004,4.953,4.706,6
+3 or more separate tumor parts,mu__PatientID_0089/Timepoint_6,mu,val,90.501,1.216,1.216,4
+3 or more separate tumor parts,mu__PatientID_0090/Timepoint_2,mu,train,181.982,7.147,7.0760000000000005,3
+3 or more separate tumor parts,mu__PatientID_0093/Timepoint_1,mu,train,27.198,12.941,6.823,3
+3 or more separate tumor parts,mu__PatientID_0094/Timepoint_5,mu,train,81.892,7.407,6.127,3
+3 or more separate tumor parts,mu__PatientID_0097/Timepoint_3,mu,train,56.336,10.727,10.703,4
+3 or more separate tumor parts,mu__PatientID_0099/Timepoint_1,mu,train,36.416000000000004,9.045,7.496,4
+3 or more separate tumor parts,mu__PatientID_0099/Timepoint_2,mu,train,89.296,13.603,7.226,5
+3 or more separate tumor parts,mu__PatientID_0105/Timepoint_2,mu,train,9.895,0.232,0.232,3
+3 or more separate tumor parts,mu__PatientID_0105/Timepoint_4,mu,train,20.154,6.304,5.772,3
+3 or more separate tumor parts,mu__PatientID_0117/Timepoint_3,mu,train,55.653,10.201,10.181000000000001,4
+3 or more separate tumor parts,mu__PatientID_0120/Timepoint_1,mu,train,80.45700000000001,9.464,9.011000000000001,3
+3 or more separate tumor parts,mu__PatientID_0125/Timepoint_1,mu,train,31.48,6.569,6.569,3
+3 or more separate tumor parts,mu__PatientID_0126/Timepoint_1,mu,train,60.14,13.106,11.689,4
+3 or more separate tumor parts,mu__PatientID_0130/Timepoint_1,mu,train,44.987,42.564,35.018,3
+3 or more separate tumor parts,mu__PatientID_0141/Timepoint_1,mu,val,91.803,42.971000000000004,35.51,3
+3 or more separate tumor parts,mu__PatientID_0159/Timepoint_3,mu,train,0.8250000000000001,0.395,0.395,3
+3 or more separate tumor parts,mu__PatientID_0162/Timepoint_2,mu,train,42.579,14.081,13.284,3
+3 or more separate tumor parts,mu__PatientID_0171/Timepoint_1,mu,val,205.87800000000001,50.248,40.247,3
+3 or more separate tumor parts,mu__PatientID_0171/Timepoint_2,mu,val,254.395,68.616,56.943,3
+3 or more separate tumor parts,mu__PatientID_0171/Timepoint_3,mu,val,269.221,88.28,74.71900000000001,4
+3 or more separate tumor parts,mu__PatientID_0205/Timepoint_2,mu,train,44.391,11.13,11.13,3
+3 or more separate tumor parts,mu__PatientID_0205/Timepoint_5,mu,train,80.782,11.978,11.869,4
+3 or more separate tumor parts,mu__PatientID_0214/Timepoint_6,mu,train,7.349,0.138,0.138,5
+3 or more separate tumor parts,mu__PatientID_0235/Timepoint_1,mu,val,86.325,0.297,0.297,3
+3 or more separate tumor parts,mu__PatientID_0250/Timepoint_3,mu,train,16.537,1.574,1.574,3
+3 or more separate tumor parts,mu__PatientID_0252/Timepoint_3,mu,train,155.368,37.363,37.214,5
+3 or more separate tumor parts,mu__PatientID_0260/Timepoint_2,mu,train,31.233,0.0,0.0,3
+3 or more separate tumor parts,mu__PatientID_0267/Timepoint_1,mu,train,87.76,36.115,30.757,3
+3 or more separate tumor parts,mu__PatientID_0271/Timepoint_1,mu,train,13.796000000000001,3.831,3.831,4
+3 or more separate tumor parts,mu__PatientID_0275/Timepoint_3,mu,train,4.003,0.0,0.0,3
+3 or more separate tumor parts,rhuh__RHUH-0002/2.0,rhuh,train,10.491,4.599,4.293,4
+3 or more separate tumor parts,rhuh__RHUH-0004/1.0,rhuh,train,45.382,0.0,0.0,3
+3 or more separate tumor parts,rhuh__RHUH-0006/2.0,rhuh,train,31.815,6.087,5.864,4
+3 or more separate tumor parts,rhuh__RHUH-0014/2.0,rhuh,train,139.012,40.912,31.069,3
+3 or more separate tumor parts,rhuh__RHUH-0029/2.0,rhuh,train,258.207,93.82300000000001,84.342,3
+3 or more separate tumor parts,rhuh__RHUH-0036/2.0,rhuh,train,40.677,3.177,3.09,3
+3 or more separate tumor parts,rhuh__RHUH-0038/2.0,rhuh,val,10.962,0.995,0.995,5
+tumor touches the scan edge,brats2021__BraTS2021_00193/0,brats2021,train,71.098,26.754,22.159,1
+tumor touches the scan edge,brats2021__BraTS2021_01041/0,brats2021,train,91.48100000000001,60.654,10.285,2
+tumor touches the scan edge,brats2021__BraTS2021_01576/0,brats2021,val,97.063,33.682,22.332,1
+tumor touches the scan edge,mu__PatientID_0071/Timepoint_1,mu,train,118.435,56.282000000000004,54.932,3
+tumor touches the scan edge,mu__PatientID_0090/Timepoint_2,mu,train,181.982,7.147,7.0760000000000005,3
+tumor touches the scan edge,mu__PatientID_0110/Timepoint_1,mu,train,155.838,7.546,7.546,2
+tumor touches the scan edge,mu__PatientID_0189/Timepoint_6,mu,train,15.015,1.301,1.301,1
+tumor touches the scan edge,mu__PatientID_0208/Timepoint_1,mu,train,20.483,3.007,3.007,1
+tumor touches the scan edge,mu__PatientID_0275/Timepoint_1,mu,train,25.213,11.862,11.862,2

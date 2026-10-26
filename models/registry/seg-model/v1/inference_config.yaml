@@ -1,0 +1,31 @@
+# How to run seg-model v1 on new patients (nnU-Net v2).
+model: seg-model
+version: v1
+
+input:
+  file_ending: .nii.gz
+  # Files per patient: <case>_0000.nii.gz ... <case>_0003.nii.gz, in this order
+  channels: {0: T1, 1: T1ce, 2: T2, 3: FLAIR}
+  preprocessing: cleaned scans as produced by M1-T04
+
+output:
+  labels: {background: 0, NCR: 1, ED: 2, ET: 3}
+  regions:            # same as REGIONS in src/bmts/common/constants.py
+    TC: [1, 3]
+    WT: [1, 2, 3]
+    ET: [3]
+
+nnunet:
+  dataset_id: 501
+  configuration: 3d_fullres
+  fold: 0
+  trainer: nnUNetTrainer_50epochs
+  checkpoint: checkpoint_best.pth
+  mirroring_tta: true   # nnU-Net default; add --disable_tta to turn off
+
+# Set nnUNet_results to the folder that contains Dataset501_BraTS2021, then:
+command: >
+  nnUNetv2_predict -i <input_dir> -o <output_dir> -d 501 -c 3d_fullres
+  -f 0 -tr nnUNetTrainer_50epochs -chk checkpoint_best.pth
+
+hardware_note: trained and evaluated on a Colab T4 GPU

@@ -1,0 +1,44 @@
+{
+  "model_name": "seg-model",
+  "version": "v1",
+  "stage": "Selected Model (end of Milestone 2)",
+  "task": "M2-T06",
+  "source_task": "M2-T04",
+  "framework": "nnU-Net v2",
+  "nnunetv2_version": "2.8.1",
+  "nnunetv2_version_note": "Read with pip show in a fresh Colab on 2026-10-10 after pip install nnunetv2. The training session did not record its version, so this is not confirmed to be the version used for training.",
+  "nnunet": {
+    "dataset": "Dataset501_BraTS2021",
+    "configuration": "3d_fullres",
+    "fold": 0,
+    "trainer": "nnUNetTrainer_50epochs",
+    "plans": "nnUNetPlans",
+    "checkpoint": "checkpoint_best.pth"
+  },
+  "checkpoint_file": {
+    "name": "checkpoint_best.pth",
+    "size_bytes": 249741887,
+    "size_approx": "about 250 MB",
+    "sha256": "7dcb450bf5455a0c62c9e1b368ee6341c687f555528d5ed3cd3399d88ea0f5e0",
+    "location": "Drive: BrainMRI_Data/runs/M2-T04_nnunet/nnUNet_results/Dataset501_BraTS2021/nnUNetTrainer_50epochs__nnUNetPlans__3d_fullres/fold_0/checkpoint_best.pth",
+    "in_git": false
+  },
+  "source_experiment": "M2-T04 (no EXP id recorded)",
+  "config_path": "notebooks/M2_T04_nnUNet_vs_3D_UNet2.ipynb",
+  "mlflow_run_id": null,
+  "repo_commit_when_written": "04ac6de1bbcd2099830157270c695d4af3b20648",
+  "data": {
+    "dataset": "BraTS 2021 (cleaned, M1-T04)",
+    "split": "split_v1 (seed 42)",
+    "n_train": 875,
+    "n_val": 188,
+    "test_set_used": false
+  },
+  "val_metrics": {
+    "mean_dice": 0.9078,
+    "dice": {"TC": 0.9171, "WT": 0.9346, "ET": 0.8717},
+    "hd95_mm": {"TC": 4.60, "WT": 5.62, "ET": 4.29}
+  },
+  "baseline_for_comparison": {"model": "3D U-Net EXP-0001", "mean_dice": 0.7646},
+  "model_card": "model_card.md"
+}

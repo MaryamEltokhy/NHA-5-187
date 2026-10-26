@@ -1,0 +1,6 @@
+dataset_source,external,test,train,val
+africa,146,0,0,0
+brats2021,0,188,875,188
+mu,0,30,142,31
+rhuh,0,6,28,6
+utsw,625,0,0,0
