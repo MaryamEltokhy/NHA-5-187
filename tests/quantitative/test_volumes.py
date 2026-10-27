@@ -45,3 +45,18 @@ def test_reads_voxel_size_from_the_file_header(tmp_path):
     assert spacing == (2.0, 2.0, 2.0) and vols["ET"]["cm3"] == 0.064
     table = volumes_table([path])
     assert table.loc[0, "case"] == "case1" and table.loc[0, "ET_cm3"] == 0.064
+
+
+def test_resection_cavity_is_not_tumor():
+    seg = make_seg()
+    seg[7:9, 7:9, 7:9] = 4                     # post-operative cavity (MU-Glioma-Post)
+    v = region_volumes(seg, (1, 1, 1))
+    assert v["WT"]["voxels"] == 8 + 3 + 5 and v["TC"]["voxels"] == 11 and v["ET"]["voxels"] == 8
+
+
+def test_unknown_labels_are_refused():
+    import pytest
+    seg = make_seg()
+    seg[9, 9, 9] = 5
+    with pytest.raises(ValueError, match="unexpected label"):
+        region_volumes(seg, (1, 1, 1))
