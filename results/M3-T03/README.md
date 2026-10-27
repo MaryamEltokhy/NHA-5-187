@@ -3,14 +3,16 @@
 `radiomics_features_val.csv` has shape, first-order and texture features of every tumor region for the 188 validation
 patients, calculated with PyRadiomics from the nnU-Net predicted masks (M2-T04, the model in `models/registry/seg-model/v1/`).
 
-- **Rows:** 564 = 188 patients x 3 regions. **Columns:** 293 features plus 4 id columns.
+- **Rows:** 564 = 188 patients x 3 regions. **Columns:** 293 features, plus `patient_id`, `region`, `voxels` and `skip_reason`.
 - **Regions** (they overlap): TC = labels 1 + 3, WT = labels 1 + 2 + 3, ET = label 3 (same definition as `bmts.common.constants.REGIONS`).
-- **Images:** the cleaned scans from M1-T04 (RAS, 240 x 240 x 155, 1 mm voxels, z-score inside the brain), image types T1ce, FLAIR and T2.
+- **Images:** the cleaned scans from M1-T04 (RAS, 240 x 240 x 155, 1 mm voxels, z-score inside the brain), image types T1ce, FLAIR and T2 (T1 is left out: it shows the tumor parts least, see `docs/EDA_REPORT.md` §2).
 - **Settings:** `configs/radiomics/pyradiomics_params.yaml`. Fixed bin width 0.25 (the images are z-scored, so the default
   width of 25 would put the whole tumor in one bin), no extra normalization and no resampling (already done by the cleaning step),
   3D features, original image only, all 7 feature classes.
-- **Code:** `notebooks/NN_m3_t03_radiomics.ipynb` (self-contained, run on the real data in Colab).
-  Install: `environment/requirements-radiomics.txt`.
+- **Code:** the run on the real data is `notebooks/07_m3_t03_radiomics.ipynb` (Colab). The same extraction as a reusable,
+  tested function, used by the analysis pipeline (M3-T05): `src/bmts/radiomics/features.py` (`extract_case`), tests in
+  `tests/radiomics_features/`. Install: `environment/requirements-radiomics.txt` (PyRadiomics pinned to one commit;
+  the notebook installs that same commit).
 - **Versions:** PyRadiomics 3.1.1.dev111+g8ed579383 (from GitHub, commit pinned in the requirements file), Python 3.13.16, Google Colab.
   The run took 66.9 minutes with 2 processes.
 
@@ -31,7 +33,19 @@ the validation patients of `split_v1.csv`, so no locked test patient is included
 
 **Limits:**
 - These are features of the model's predicted masks, not of the expert masks, so they carry the model's errors (mean Dice 0.908 on these patients).
-- The model predicted enhancing tumor in 3 patients (BraTS2021_01483, 01509, 01535) who have none in the expert mask, so their ET features do not describe real tumor.
+- In 5 patients the predicted ET does not overlap the expert ET at all (ET Dice 0 in `results/M2-T04/scores_nnunet_per_case.csv`),
+  so their ET features do not describe the real enhancing tumor:
+  - in 3 of them (BraTS2021_01483, 01509, 01535) the expert mask has no ET at all;
+  - in 2 (BraTS2021_00412 with 1438 predicted ET voxels, 01528 with 327) the expert ET exists but sits elsewhere.
 - Some regions are small: the smallest ET has 60 voxels (BraTS2021_01509), then 109 (00540) and 211 (01535). Texture features of regions this small are unreliable and should be used with care.
-- In 5 patients (BraTS2021_00284, 00496, 00540, 01077, 01159) TC and ET are the same region, because the predicted mask has no NCR label.
+- In 5 patients (BraTS2021_00284, 00496, 00540, 01077, 01159) TC and ET are the same region, because the predicted mask
+  has no NCR label; their TC features repeat their ET features.
+- **Few gray-level bins:** with a bin width of 0.25 a region gets about (intensity range / 0.25) bins.
+  - T2 is the coarsest: the median is 21 bins for WT, 20 for TC and 18 for ET; 58 of the 188 ET rows have fewer than
+    16 bins in T2, and 14 rows have fewer than 8 in at least one image type.
+  - T1ce and FLAIR have medians of 27–38 bins.
+  - Texture features from few bins are coarse; compare T2 texture features with care. The pipeline
+    (`extract_case`) adds a `quality_note` column that flags regions under 100 voxels or under 16 bins.
+- `*_firstorder_Energy` equals `*_firstorder_TotalEnergy` and `shape_VoxelVolume` equals `voxels`, because the
+  voxels are 1 mm3.
 - Only the 188 validation patients of BraTS 2021 are covered. The locked test patients are not included.

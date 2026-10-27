@@ -3,7 +3,12 @@
 Volume = number of voxels x volume of one voxel. The voxel size is read from the NIfTI header of the
 file itself, never assumed. Volumes are kept in mm3 and reported in cm3 (1 cm3 = 1000 mm3 = 1 mL).
 Regions are the team's REGIONS (TC = labels 1+3, WT = labels 1+2+3, ET = label 3), so they overlap.
+Label 4 (resection cavity, post-operative cohorts such as MU-Glioma-Post) belongs to no region and is not counted.
+Masks must already use the canonical labels 0-4 (the cleaning step M1-T04 maps BraTS 2021's ET 4 to 3): any other
+value raises an error instead of being silently left out.
 """
+from pathlib import Path
+
 import numpy as np
 import nibabel as nib
 import pandas as pd
@@ -11,6 +16,7 @@ import pandas as pd
 from bmts.common.constants import REGIONS
 
 MM3_PER_CM3 = 1000.0
+VALID_LABELS = (0, 1, 2, 3, 4)
 
 
 def voxel_volume_mm3(spacing) -> float:
@@ -18,8 +24,16 @@ def voxel_volume_mm3(spacing) -> float:
     return float(np.prod([float(s) for s in spacing]))
 
 
+def check_labels(seg: np.ndarray) -> None:
+    """Raise if the label map has values outside the canonical labels 0-4."""
+    unexpected = sorted(set(np.unique(seg).tolist()) - set(VALID_LABELS))
+    if unexpected:
+        raise ValueError(f"unexpected label values {unexpected}; expected canonical labels {VALID_LABELS}")
+
+
 def region_volumes(seg: np.ndarray, spacing=(1.0, 1.0, 1.0)) -> dict:
-    """Voxel count, mm3 and cm3 for TC, WT and ET of one label map."""
+    """Voxel count, mm3 and cm3 for TC, WT and ET of one label map (label 4 is not part of any region)."""
+    check_labels(seg)
     one_voxel = voxel_volume_mm3(spacing)
     out = {}
     for name, labels in REGIONS.items():
@@ -42,7 +56,7 @@ def volumes_table(paths) -> pd.DataFrame:
     rows = []
     for p in paths:
         vols, spacing = volumes_from_nifti(p)
-        name = str(p).split("/")[-1].split("\\")[-1]
+        name = Path(p).name
         row = {"case": name.replace(".nii.gz", "").replace(".nii", ""),
                "voxel_mm3": voxel_volume_mm3(spacing)}
         for region, v in vols.items():

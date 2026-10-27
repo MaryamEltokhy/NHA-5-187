@@ -20,12 +20,9 @@ from monai.data import CacheDataset, DataLoader, Dataset, SmartCacheDataset
 
 from bmts.common.constants import MODALITIES, SEG
 from bmts.data.augmentation.transforms import train_transforms, val_transforms
+from bmts.data.splits import LockboxError, _locked  # LockboxError lives there so light code can use it without torch
 
 REQUIRED_COLUMNS = {"dataset_source", "canonical_subject_id", "split"}
-
-
-class LockboxError(RuntimeError):
-    """Raised when code asks for locked test patients outside the final evaluation."""
 
 
 def load_config(path, **overrides):
@@ -47,11 +44,9 @@ def list_cases(split_csv, processed_root, splits=("train",), datasets=("brats202
     if missing_columns:
         raise ValueError(f"{split_csv} lacks columns {sorted(missing_columns)}")
     rows = table[table.split.isin(splits) & table.dataset_source.isin(datasets)]
-    locked = rows.split.eq("test")
-    if "lockbox" in rows:
-        locked |= rows.lockbox.str.lower().isin(["true", "1", "yes"])
+    locked = _locked(rows)                           # split "test" or "external", or lockbox True
     if locked.any() and not allow_lockbox:
-        raise LockboxError(f"{int(locked.sum())} requested patients are in the locked test set; "
+        raise LockboxError(f"{int(locked.sum())} requested patients are in the locked test or external set; "
                            "they may only be loaded by the final evaluation (M5-T02).")
     # longitudinal cohorts (MU, RHUH) have one split row per scan; every scan of a patient is found below anyway,
     # so keep one row per patient or each scan would be listed once per row
