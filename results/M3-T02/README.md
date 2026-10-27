@@ -84,10 +84,17 @@ has the same sign as the expert's):
 - **The recurrence scan is not always bigger.** In 16 of 27 patients the expert whole-tumor volume on the recurrence
   scan is smaller than before surgery.
 
-**Check against the dataset's own numbers.** The notebook compares the expert volumes with the clinical volumes in
-the RHUH-GBM clinical file (enhancing tumor and T2/FLAIR abnormality, before and after surgery). They differ by at
-most 5.40 cm3 over the 27 patients, so the label reading matches the dataset. The largest difference is on one pre-op
-enhancing volume and was not investigated further.
+**Check against the dataset's own numbers (narrow).** The RHUH-GBM clinical file gives two volumes per patient, only
+for the pre-op and early post-op scans. The notebook compares each with the matching part of the expert masks:
+
+| Clinical file column | Compared with | Largest difference over 27 patients |
+| --- | --- | --- |
+| contrast-enhancing tumor | TC = labels 1 + 3 (necrosis + enhancing tumor) | 5.40 cm3 pre-op (one patient), 0.10 cm3 post-op |
+| T2/FLAIR abnormality | WT - TC = label 2 | 0.01 cm3 pre-op and post-op |
+
+The near-exact T2/FLAIR match shows the masks are read with the dataset's own label meaning. The check does not cover
+ET (label 3) or necrosis (label 1) on their own, or the recurrence scan, because the clinical file has no such
+volumes. The one 5.40 cm3 pre-op difference was not investigated further.
 
 ## Limits
 
