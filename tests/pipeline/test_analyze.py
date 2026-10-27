@@ -101,12 +101,16 @@ def test_three_scans_give_every_output(data, tmp_path, fake_nnunet):
     assert set(summary["outputs"]) == {"volumes", "uncertainty", "radiomics", "metrics", "changes"}
     vols = pd.read_csv(out / "volumes.csv")
     assert len(vols) == 3 and (vols.ET_cm3 <= vols.TC_cm3).all() and (vols.TC_cm3 <= vols.WT_cm3).all()
+    assert (vols.TC_voxels == vols.NCR_voxels + vols.ET_voxels).all()                 # per-label volumes add up
+    assert (vols.WT_voxels == vols.NCR_voxels + vols.ED_voxels + vols.ET_voxels).all() and (vols.RC_cm3 == 0).all()
     changes = pd.read_csv(out / "changes.csv")
-    assert len(changes) == 3 * 3 * 2 and set(changes.source) == {"prediction", "expert"} and changes.same_grid.all()
+    assert len(changes) == 3 * 5 * 2 and set(changes.source) == {"prediction", "expert"} and changes.same_grid.all()
+    assert set(changes.region) == {"TC", "WT", "ET", "NCR", "ED"}
     expert_wt = changes[(changes.source == "expert") & (changes.region == "WT") & (changes.tp_a == 0) & (changes.tp_b == 1)]
     assert expert_wt.pair.item() == "pre-op -> early post-op" and expert_wt.change_cm3.item() < 0
     metrics = pd.read_csv(out / "metrics.csv")
     assert metrics[["dice_WT", "dice_TC", "dice_ET"]].gt(0.5).all().all()     # fake model sees the bright tumor
+    assert {"NCR_cm3_expert", "ED_cm3_expert", "RC_cm3_expert"} <= set(metrics.columns)
     rad = pd.read_csv(out / "radiomics.csv")
     assert len(rad) == 9 and (rad.voxels == rad.shape_VoxelVolume).all()
     for tp in (0, 1, 2):
@@ -166,4 +170,4 @@ def test_raw_brats_masks_get_their_et_label_remapped(tmp_path, script, fake_nnun
     script.main()
     cleaned = np.asarray(nib.load(tmp_path / "out" / "cleaned" / "raw_brats" / "seg.nii.gz").dataobj)
     assert 4 not in np.unique(cleaned) and (cleaned == 3).sum() == (seg == 4).sum()
-    assert pd.read_csv(tmp_path / "out" / "metrics.csv").ET_cm3.item() > 0     # expert ET counted as ET
+    assert pd.read_csv(tmp_path / "out" / "metrics.csv").ET_cm3_expert.item() > 0     # expert ET counted as ET

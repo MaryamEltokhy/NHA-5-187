@@ -6,7 +6,7 @@ Steps for every scan, all with the project's own code:
    (the BraTS convention); the cleaning step does not resample or skull-strip.
 2. mask + confidence map, M3-T04: seg-model v1 (nnU-Net) predicted once per mirror flip
    (bmts.uncertainty.nnunet_tta.predict_with_confidence); the mask equals nnUNetv2_predict's.
-3. volumes per region, M3-T01 (bmts.quantitative.volumes.region_volumes).
+3. volumes per region (TC, WT, ET) and per label (NCR, ED, RC), M3-T01 (bmts.quantitative.volumes.all_volumes).
 4. radiomics per region, M3-T03 (bmts.radiomics.features.extract_case, settings configs/radiomics/).
 5. if an expert mask is given: Dice per region and the expert volumes (for checking only).
 Then, when two or more scans of the same patient are given: volume change between every pair, M3-T02
@@ -32,7 +32,10 @@ import pandas as pd
 
 from bmts.common.constants import MODALITIES, REGIONS, SEG
 from bmts.quantitative.longitudinal import MIN_BASELINE_CM3, change_rows, same_grid
-from bmts.quantitative.volumes import region_volumes
+from bmts.quantitative.volumes import all_volumes
+
+MEASURES = ("TC", "WT", "ET", "NCR", "ED", "RC")   # regions, then single labels (ET is both)
+CHANGE_MEASURES = ("TC", "WT", "ET", "NCR", "ED")
 from bmts.uncertainty import nnunet_tta as T
 from bmts.uncertainty.maps import case_summary
 
@@ -114,9 +117,9 @@ def analyze(scans, out_dir, predictor, *, clean=False, radiomics=True, extractor
                                                      scan.scan_id)
         spacing = tuple(float(s) for s in props["sitk_stuff"]["spacing"])
         base = {"scan_id": scan.scan_id, "patient": scan.patient, "timepoint": scan.timepoint, "label": scan.label}
-        vols = region_volumes(seg, spacing)
-        volumes.append({**base, **{f"{r}_cm3": vols[r]["cm3"] for r in REGIONS},
-                        **{f"{r}_voxels": vols[r]["voxels"] for r in REGIONS}})
+        vols = all_volumes(seg, spacing)
+        volumes.append({**base, **{f"{r}_cm3": vols[r]["cm3"] for r in MEASURES},
+                        **{f"{r}_voxels": vols[r]["voxels"] for r in MEASURES}})
         uncertainty.append({**base, **case_summary(seg, maps, voxel_ml=float(np.prod(spacing)) / 1000)})
         del maps
         if radiomics:
@@ -127,8 +130,8 @@ def analyze(scans, out_dir, predictor, *, clean=False, radiomics=True, extractor
             truth = np.rint(T.read_sitk(scan.expert_seg)).astype(np.int16)
             if truth.shape != seg.shape:
                 raise ValueError(f"{scan.scan_id}: expert mask {truth.shape} and prediction {seg.shape} differ")
-            truth_vols = region_volumes(truth, spacing)
-            expert_volumes.append({**base, **{f"{r}_cm3": truth_vols[r]["cm3"] for r in REGIONS}})
+            truth_vols = all_volumes(truth, spacing)
+            expert_volumes.append({**base, **{f"{r}_cm3": truth_vols[r]["cm3"] for r in MEASURES}})
             metrics.append({**base, **{f"dice_{r}": dice(np.isin(seg, l), np.isin(truth, l)) for r, l in REGIONS.items()}})
         volumes[-1]["seconds"] = round(time.time() - t0, 1)
         print(f"{scan.scan_id}: WT {vols['WT']['cm3']:.1f} cm3, TC {vols['TC']['cm3']:.1f}, ET {vols['ET']['cm3']:.1f} "
@@ -142,8 +145,9 @@ def analyze(scans, out_dir, predictor, *, clean=False, radiomics=True, extractor
         pd.DataFrame(features).to_csv(out_dir / "radiomics.csv", index=False)
         written["radiomics"] = "radiomics.csv"
     if metrics:
-        pd.DataFrame(metrics).merge(pd.DataFrame(expert_volumes), on=["scan_id", "patient", "timepoint", "label"],
-                                    suffixes=("", "_expert")).to_csv(out_dir / "metrics.csv", index=False)
+        expert = pd.DataFrame(expert_volumes).rename(columns={f"{m}_cm3": f"{m}_cm3_expert" for m in MEASURES})
+        pd.DataFrame(metrics).merge(expert, on=["scan_id", "patient", "timepoint", "label"]).to_csv(
+            out_dir / "metrics.csv", index=False)
         written["metrics"] = "metrics.csv"
 
     changes, grid_notes = _changes(scans, volumes, expert_volumes, min_baseline_cm3)
@@ -183,9 +187,9 @@ def _changes(scans, volumes, expert_volumes, min_baseline_cm3):
         names = {s.timepoint: s.label or str(s.timepoint) for s in group}
         sources = [("prediction", volumes)] + ([("expert", expert_volumes)] if len(expert_volumes) == len(volumes) else [])
         for source, table in sources:
-            vols = {r["timepoint"]: {reg: r[f"{reg}_cm3"] for reg in REGIONS}
+            vols = {r["timepoint"]: {m: r[f"{m}_cm3"] for m in CHANGE_MEASURES}
                     for r in table if r["patient"] == patient}
-            for row in change_rows(vols, names=names, min_baseline_cm3=min_baseline_cm3):
+            for row in change_rows(vols, names=names, min_baseline_cm3=min_baseline_cm3, measures=CHANGE_MEASURES):
                 rows.append({"patient": patient, "source": source, **row,
                              "same_grid": notes[patient]})
     return rows, notes

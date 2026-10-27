@@ -60,3 +60,15 @@ def test_unknown_labels_are_refused():
     seg[9, 9, 9] = 5
     with pytest.raises(ValueError, match="unexpected label"):
         region_volumes(seg, (1, 1, 1))
+
+
+def test_single_label_volumes_add_up_to_the_regions():
+    from bmts.quantitative.volumes import all_volumes, label_volumes
+    seg = make_seg()
+    seg[7:9, 7:9, 7:9] = 4                     # 8 voxels of resection cavity
+    labels = label_volumes(seg, (1, 1, 1))
+    assert {k: v["voxels"] for k, v in labels.items()} == {"NCR": 3, "ED": 5, "ET": 8, "RC": 8}
+    both = all_volumes(seg, (1, 1, 1))
+    assert both["TC"]["voxels"] == both["NCR"]["voxels"] + both["ET"]["voxels"]
+    assert both["WT"]["voxels"] == both["NCR"]["voxels"] + both["ED"]["voxels"] + both["ET"]["voxels"]
+    assert both["RC"]["cm3"] == 0.008 and set(both) == {"TC", "WT", "ET", "NCR", "ED", "RC"}

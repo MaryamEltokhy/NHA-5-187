@@ -7,6 +7,8 @@ nnU-Net predicted masks (M2-T04, the model in `models/registry/seg-model/v1/`).
   The voxel size is read from each file's header. Here every voxel is 1 x 1 x 1 mm, so 1000 voxels = 1 cm3.
 - **Regions** (they overlap, ET is inside TC and TC is inside WT): TC = labels 1 + 3, WT = labels 1 + 2 + 3, ET = label 3.
 - **Code:** `src/bmts/quantitative/volumes.py`. Tests: `tests/quantitative/test_volumes.py`.
+  The same file also gives the volume of each label on its own (`label_volumes`: NCR, ED, ET, RC), which the
+  analysis pipeline (M3-T05) reports next to the regions.
   Run on the real data in `notebooks/06_m3_t01_tumor_volume.ipynb`.
 
 | Column | Meaning |

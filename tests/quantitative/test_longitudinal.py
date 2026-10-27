@@ -41,3 +41,10 @@ def test_same_grid():
     b = nib.Nifti1Image(np.zeros((4, 4, 4), np.uint8), np.eye(4))
     shifted = nib.Nifti1Image(np.zeros((4, 4, 4), np.uint8), np.diag([1.0, 1.0, 2.0, 1.0]))
     assert same_grid(a, b) and not same_grid(a, shifted)
+
+
+def test_single_labels_can_be_compared_too():
+    vols = {0: {"NCR": 2.0, "ED": 20.0}, 1: {"NCR": 1.0, "ED": 30.0}}
+    rows = change_rows(vols, measures=("NCR", "ED"))
+    assert [r["region"] for r in rows] == ["NCR", "ED"]
+    assert rows[1]["change_pct"] == pytest.approx(50.0)

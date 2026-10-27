@@ -20,9 +20,9 @@ In Colab, `notebooks/08_m3_t05_analysis_pipeline.ipynb` does the same with a few
 | Refuse locked test patients and external cohorts | `bmts.data.splits.check_subject` | M1-T04 rules |
 | Cleaning, only with `--raw`: RAS, 240 x 240 x 155, z-score inside the brain | `bmts.data.cleaning.standardize` | M1-T04 |
 | Mask + confidence map: seg-model v1 run once per mirror flip, mask identical to `nnUNetv2_predict` | `bmts.uncertainty.nnunet_tta.predict_with_confidence` | M2, M3-T04 |
-| Volumes of TC, WT, ET (label 4, resection cavity, is not tumor) | `bmts.quantitative.volumes.region_volumes` | M3-T01 |
+| Volumes of the regions TC, WT, ET and of each label: NCR (1), ED (2), ET (3), RC (4, resection cavity, never tumor) | `bmts.quantitative.volumes.all_volumes` | M3-T01 |
 | Radiomics on T1ce, FLAIR, T2 with `configs/radiomics/pyradiomics_params.yaml`, with a `quality_note` per region | `bmts.radiomics.features.extract_case` | M3-T03 |
-| Change between every pair of scans of the patient, from the predicted masks and, if every scan has one, the expert masks | `bmts.quantitative.longitudinal.change_rows` | M3-T02 |
+| Change between every pair of scans of the patient for TC, WT, ET, NCR and ED, from the predicted masks and, if every scan has one, the expert masks | `bmts.quantitative.longitudinal.change_rows` | M3-T02 |
 | Dice against the expert mask, when given (checking only) | `bmts.pipeline.analyze` | M2-T02 conventions |
 
 **Raw input:** `--raw` runs the M1-T04 cleaning step first. That step does not skull-strip, co-register or resample,
@@ -38,11 +38,11 @@ always given.
 | --- | --- |
 | `<scan>/<scan>_seg.nii.gz` | Predicted mask (0 background, 1 NCR, 2 ED, 3 ET), in the input scan's grid |
 | `<scan>/<scan>_uncertainty.nii.gz`, `_disagreement.nii.gz` | Confidence maps, 0..1 (`docs/UNCERTAINTY.md`) |
-| `volumes.csv` | One row per scan: cm3 and voxels of TC, WT, ET, run time |
+| `volumes.csv` | One row per scan: cm3 and voxels of TC, WT, ET and of the single labels NCR, ED, RC (TC = NCR + ET, WT = NCR + ED + ET), run time |
 | `uncertainty.csv` | One row per scan: uncertain volume and mean uncertainty per region (`maps.case_summary`) |
 | `radiomics.csv` | One row per scan and region (columns as in `results/M3-T03`) |
-| `changes.csv` | Patients with 2+ scans: change per pair and region; `source` = prediction or expert; `same_grid` |
-| `metrics.csv` | Scans with an expert mask: Dice per region and the expert volumes |
+| `changes.csv` | Patients with 2+ scans: change per pair for TC, WT, ET, NCR and ED (column `region`); `source` = prediction or expert; `same_grid` |
+| `metrics.csv` | Scans with an expert mask: Dice per region and the expert volumes (`<name>_cm3_expert`, regions and single labels) |
 | `run_summary.json` | Scans, model (from the registry manifest), settings, repo commit, Python version, run time |
 
 ## Checks

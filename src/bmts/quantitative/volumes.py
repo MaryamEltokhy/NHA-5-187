@@ -13,10 +13,11 @@ import numpy as np
 import nibabel as nib
 import pandas as pd
 
-from bmts.common.constants import REGIONS
+from bmts.common.constants import ED, ET, NCR, RC, REGIONS
 
 MM3_PER_CM3 = 1000.0
 VALID_LABELS = (0, 1, 2, 3, 4)
+LABELS = {"NCR": NCR, "ED": ED, "ET": ET, "RC": RC}   # one entry per label; RC only in post-op cohorts
 
 
 def voxel_volume_mm3(spacing) -> float:
@@ -40,6 +41,29 @@ def region_volumes(seg: np.ndarray, spacing=(1.0, 1.0, 1.0)) -> dict:
         voxels = int(np.isin(seg, labels).sum())
         mm3 = voxels * one_voxel
         out[name] = {"voxels": voxels, "mm3": mm3, "cm3": mm3 / MM3_PER_CM3}
+    return out
+
+
+def label_volumes(seg: np.ndarray, spacing=(1.0, 1.0, 1.0)) -> dict:
+    """Voxel count, mm3 and cm3 of each label on its own: NCR (1), ED (2), ET (3) and RC (4, resection cavity).
+
+    Useful to compare with sources that report single labels, e.g. a necrosis or edema volume. ET is the same as the
+    ET region; TC = NCR + ET and WT = NCR + ED + ET.
+    """
+    check_labels(seg)
+    one_voxel = voxel_volume_mm3(spacing)
+    out = {}
+    for name, label in LABELS.items():
+        voxels = int(np.count_nonzero(seg == label))
+        mm3 = voxels * one_voxel
+        out[name] = {"voxels": voxels, "mm3": mm3, "cm3": mm3 / MM3_PER_CM3}
+    return out
+
+
+def all_volumes(seg: np.ndarray, spacing=(1.0, 1.0, 1.0)) -> dict:
+    """Regions (TC, WT, ET) and single labels (NCR, ED, RC) in one dict, keyed by name."""
+    out = region_volumes(seg, spacing)
+    out.update({k: v for k, v in label_volumes(seg, spacing).items() if k != "ET"})
     return out
 
 

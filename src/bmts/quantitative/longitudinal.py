@@ -31,10 +31,11 @@ def percent_change(before_cm3, after_cm3, min_baseline_cm3=MIN_BASELINE_CM3):
     return (after_cm3 - before_cm3) / before_cm3 * 100.0
 
 
-def change_rows(volumes, pairs=None, names=None, min_baseline_cm3=MIN_BASELINE_CM3, days=None):
+def change_rows(volumes, pairs=None, names=None, min_baseline_cm3=MIN_BASELINE_CM3, days=None, measures=None):
     """One row per (pair of scans, region).
 
     volumes: {timepoint: {region: cm3}} for one patient, timepoints sortable in time order (e.g. 0, 1, 2).
+    measures: which keys of volumes to compare; default the regions TC, WT, ET (add e.g. "NCR", "ED" for single labels).
     pairs: list of (earlier, later); default every pair in time order.
     names: optional {timepoint: readable name} (e.g. {0: "pre-op"}).
     days: optional {(earlier, later): days between the scans}.
@@ -46,7 +47,7 @@ def change_rows(volumes, pairs=None, names=None, min_baseline_cm3=MIN_BASELINE_C
     for a, b in pairs:
         if order.index(a) >= order.index(b):
             raise ValueError(f"pair ({a}, {b}) is not in time order")
-        for region in REGIONS:
+        for region in measures or tuple(REGIONS):
             va, vb = volumes[a][region], volumes[b][region]
             pct = percent_change(va, vb, min_baseline_cm3)
             rows.append({
