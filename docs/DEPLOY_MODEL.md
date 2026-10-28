@@ -43,12 +43,16 @@ as `nnUNetv2_predict`:
 
 The input must be T1, T1ce, T2 and FLAIR, cleaned as in M1-T04. The model was trained on cleaned BraTS scans.
 
-| Setting | Network passes per tile | Mask |
-| --- | --- | --- |
-| `tta=True` (`--tta`) | 8 (all mirror flips, averaged) | Computed exactly as seg-model v1 (`nnUNetv2_predict` default) |
-| `tta=False` (default) | 1 | Faster; may differ from v1 on a few voxels at the tumor boundary |
+Measured on a Colab T4 GPU with 20 validation patients ([`results/M4-T01`](../results/M4-T01/README.md)):
 
-The measured time per scan and the difference from v1 are written to `BrainMRI_Data/runs/M4-T01_export/summary.json`.
+| Setting | Network passes per tile | Time per scan (median) | Mask compared with seg-model v1 | Mean Dice vs expert (TC / WT / ET) |
+| --- | --- | --- | --- | --- |
+| Original v1 (`nnUNetv2_predict`, from the checkpoint) | 8 | 8.7 s | – | 0.927 / 0.940 / 0.870 |
+| `tta=True` (`--tta`) | 8 (all mirror flips, averaged) | 8.6 s | **Identical**: 0 voxels differ on all 20 patients | 0.927 / 0.940 / 0.870 |
+| `tta=False` (default) | 1 | **2.1 s** | Median 1,979 voxels differ (about 2 cm³, at the boundary); lowest Dice to v1 0.94 | 0.925 / 0.939 / 0.869 |
+
+Loading the exported model takes 1.0 s, against 4.9 s for the 250 MB checkpoint. For the app, use `tta=False` for
+interactive use and `tta=True` when the result must equal the validated seg-model v1.
 
 ## Checks
 
@@ -64,12 +68,13 @@ The measured time per scan and the difference from v1 are written to `BrainMRI_D
 
 The tests run on a CPU with a smaller network. On the GPU, the notebook compares the real model with the original on
 validation patients: it counts the voxels that differ, the Dice between the two masks, the Dice against the expert
-masks, and the time per scan. Locked test patients are never loaded.
+masks, and the time per scan. Locked test patients are never loaded. The 28 Oct 2026 run is in
+[`results/M4-T01`](../results/M4-T01/README.md).
 
 ## Notes
 
-- On the GPU, nnU-Net runs the network in mixed precision (`torch.autocast`). The original model does too. Any
-  remaining difference shows in the notebook's voxel count.
+- On the GPU, nnU-Net runs the network in mixed precision (`torch.autocast`), for the original and the exported
+  model alike. The identical masks with `tta=True` show the exported model goes through the same computation.
 - PyTorch 2.14 marks TorchScript as deprecated (it still works). If a later version removes it, only
   `bmts/deploy/export.py` has to change, for example to `torch.export`. The segmenter only needs a module that maps a
   1 × 4 × 128³ tile to 4 logit channels.
