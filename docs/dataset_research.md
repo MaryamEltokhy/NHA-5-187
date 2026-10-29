@@ -401,6 +401,22 @@ BraTS evaluation note: from BraTS 2023 the official metrics are lesion-wise Dice
 
 ## 9. Recommended dataset strategy
 
+> **What was actually done (M1-T04, `qc/split_v1.csv`, seed 42):** this section is the research-stage plan.
+> The real split is patient-level, with these patients per split:
+>
+> | Cohort | Train | Val | Test | External |
+> | --- | --- | --- | --- | --- |
+> | BraTS 2021 | 875 | 188 | 188 | |
+> | MU-Glioma-Post | 142 | 31 | 30 | |
+> | RHUH-GBM | 28 | 6 | 6 | |
+> | BraTS-Africa | | | | 146 (all external) |
+> | UTSW-Glioma | | | | 625 (all external) |
+>
+> RHUH-GBM is a development and longitudinal cohort, not the "External C" test or the "25 + 15 reserved" split
+> below. Locked rows are split `test` or `external`, or have `lockbox` True. Code checks them with
+> `bmts.data.splits.check_subject` and `bmts.data.datasets.brats.list_cases` (Milestone 1 report §11,
+> `docs/EDA_REPORT.md` §1).
+
 | Cohort role | Dataset(s) | Milestones | Data role | Why | Combination risks | Harmonization required |
 | --- | --- | --- | --- | --- | --- | --- |
 | **Primary Development Cohort** | BraTS 2021 Task 1 (TCIA CC BY 4.0; Synapse 2023 GLI as identical alternative) — patient-level ≈ 70/15/15 stratified by crosswalk source, ET presence, WT-volume tertile | M1–M5 | Training (`DEV_TRAIN`) + validation (`DEV_VAL`) | Largest expert-labelled 4-modality glioma set; standard space; proposal's primary dataset | Hidden test cases of the same institutions exist in other collections (UCSF/UPenn) → those collections cannot be external | 4 → 3 ET remap; z-score; crop |

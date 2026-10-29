@@ -10,14 +10,15 @@ change over time, radiomics, a confidence map and a web app.
 > **Decision-support research prototype only.** It is not a medical device, it does not diagnose anyone, and it has
 > not been validated for clinical use.
 
-## Status (10 Oct 2026)
+## Status (28 Oct 2026)
 
 | Milestone | State |
 | --- | --- |
 | M1 – Data foundation | Done: datasets downloaded, every file checksummed, scans cleaned, patients split (locked test set), [EDA report](docs/EDA_REPORT.md) |
-| M2 – Segmentation model | Done; model card awaiting team approval |
-| M3 – Analysis (volumes, change over time, radiomics, confidence map) | In progress: tumor volumes (M3-T01) and [confidence maps](docs/UNCERTAINTY.md) (M3-T04) done |
-| M4 – App and deployment, M5 – Final tests and delivery | Planned |
+| M2 – Segmentation model | Done: nnU-Net selected and registered with an approved [model card](models/registry/seg-model/v1/model_card.md) |
+| M3 – Analysis (volumes, change over time, radiomics, confidence map) | Done: volumes ([`results/M3-T01`](results/M3-T01/README.md)), change over time ([`results/M3-T02`](results/M3-T02/README.md)), radiomics ([`results/M3-T03`](results/M3-T03/README.md)), [confidence maps](docs/UNCERTAINTY.md), all in one [analysis pipeline](docs/PIPELINE.md) |
+| M4 – App and deployment | In progress: seg-model v1 [packaged for fast prediction](docs/DEPLOY_MODEL.md) (M4-T01: 2.1 s per scan on a T4, or the identical v1 mask in 8.6 s; [`results/M4-T01`](results/M4-T01/README.md)) |
+| M5 – Final tests and delivery | Not started |
 
 Scores on the 188 BraTS 2021 validation patients (the locked test patients have not been used yet):
 
@@ -44,13 +45,13 @@ the team's Google Drive; the repository keeps only code, configs, small result f
 
 | Folder | Content |
 | --- | --- |
-| `src/bmts/` | Python package: scan cleaning (`data/cleaning`), data loader (`data/datasets`, `data/augmentation`), metrics (`evaluation`), 3D U-Net model and training loop (`segmentation`) |
+| `src/bmts/` | Python package: scan cleaning (`data/cleaning`), data loader (`data/datasets`, `data/augmentation`), metrics (`evaluation`), 3D U-Net model and training loop (`segmentation`), split rules (`data/splits.py`), volumes and change over time (`quantitative`), radiomics (`radiomics`), confidence maps (`uncertainty`), the analysis pipeline (`pipeline`), the exported model and fast segmenter (`deploy`) |
 | `configs/` | YAML settings for data, models and experiments (`training/EXP-0001.yaml`) |
-| `scripts/` | Command-line tools: `download_data.py`, `smoke_train.py`, `train.py` |
-| `notebooks/` | Colab notebooks, numbered in the order they are used (download → patient list → loader test → training → EDA), plus the M2 comparison and viewer notebooks |
+| `scripts/` | Command-line tools: `download_data.py`, `smoke_train.py`, `train.py`, `eda.py`, `uncertainty.py`, `analyze.py` (the whole analysis for one patient), `export_model.py` and `segment.py` (fast prediction) |
+| `notebooks/` | Colab notebooks, numbered in the order they are used (download → patient list → loader test → training → EDA → M3 tasks → `08_m3_t05_analysis_pipeline` → `09_m4_t01_export_model`), plus the M2 comparison and viewer notebooks |
 | `apps/` | MRI slice viewer with the tumor mask on top (Streamlit) |
-| `models/registry/` | Registered model versions: model card, manifest, inference settings (weights on Drive) |
-| `results/` | Small result files: EDA tables and charts (`eda/`), the M2-T04 model comparison |
+| `models/registry/` | Registered model versions: model card, manifest, inference settings, nnU-Net plans (weights on Drive) |
+| `results/` | Small result files: EDA tables and charts (`eda/`), the M2-T04 model comparison, one folder per M3 task, the M4-T01 speed check |
 | `data/manifests/` | Patient list and per-file SHA-256 checksums of every dataset |
 | `docs/` | Project structure, dataset research, how-to guides and results |
 | `tests/` | Automated tests (`pytest tests`) |
@@ -65,6 +66,8 @@ Most work runs in **Google Colab** (free T4 GPU) against the shared Drive folder
 pip install -r environment/requirements-dev.txt -r environment/requirements-viewer.txt
 pytest tests                                        # loader, training and viewer tests
 python scripts/train.py --exp configs/training/EXP-0001.yaml --help
+python scripts/analyze.py --help                    # mask, volumes, change, radiomics, confidence map for one patient
+python scripts/segment.py --help                    # fast tumor mask with the exported model, see docs/DEPLOY_MODEL.md
 streamlit run apps/m2_t05_viewer.py                 # needs cleaned scans, see docs/M2_T05_VIEWER.md
 ```
 

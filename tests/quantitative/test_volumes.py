@@ -45,3 +45,30 @@ def test_reads_voxel_size_from_the_file_header(tmp_path):
     assert spacing == (2.0, 2.0, 2.0) and vols["ET"]["cm3"] == 0.064
     table = volumes_table([path])
     assert table.loc[0, "case"] == "case1" and table.loc[0, "ET_cm3"] == 0.064
+
+
+def test_resection_cavity_is_not_tumor():
+    seg = make_seg()
+    seg[7:9, 7:9, 7:9] = 4                     # post-operative cavity (MU-Glioma-Post)
+    v = region_volumes(seg, (1, 1, 1))
+    assert v["WT"]["voxels"] == 8 + 3 + 5 and v["TC"]["voxels"] == 11 and v["ET"]["voxels"] == 8
+
+
+def test_unknown_labels_are_refused():
+    import pytest
+    seg = make_seg()
+    seg[9, 9, 9] = 5
+    with pytest.raises(ValueError, match="unexpected label"):
+        region_volumes(seg, (1, 1, 1))
+
+
+def test_single_label_volumes_add_up_to_the_regions():
+    from bmts.quantitative.volumes import all_volumes, label_volumes
+    seg = make_seg()
+    seg[7:9, 7:9, 7:9] = 4                     # 8 voxels of resection cavity
+    labels = label_volumes(seg, (1, 1, 1))
+    assert {k: v["voxels"] for k, v in labels.items()} == {"NCR": 3, "ED": 5, "ET": 8, "RC": 8}
+    both = all_volumes(seg, (1, 1, 1))
+    assert both["TC"]["voxels"] == both["NCR"]["voxels"] + both["ET"]["voxels"]
+    assert both["WT"]["voxels"] == both["NCR"]["voxels"] + both["ED"]["voxels"] + both["ET"]["voxels"]
+    assert both["RC"]["cm3"] == 0.008 and set(both) == {"TC", "WT", "ET", "NCR", "ED", "RC"}
